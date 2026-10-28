@@ -32,6 +32,8 @@ struct CaptureView: View {
         .padding(.vertical, 18)
         .frame(width: 580)
         .background(.regularMaterial)
-        .onAppear { focused = true }
+        // onAppear runs before the panel is key, so focus would be dropped.
+        .defaultFocus($focused, true)
+        .onAppear { DispatchQueue.main.async { focused = true } }
     }
 }
