@@ -1,8 +1,10 @@
 import KeyboardShortcuts
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct IdeasView: View {
     @Environment(IdeaStore.self) private var store
+    @State private var dragging: UUID?
     @State private var searching = false
     @State private var query = ""
     @FocusState private var searchFocused: Bool
@@ -64,7 +66,14 @@ struct IdeasView: View {
             } else {
                 ScrollView {
                     LazyVStack(spacing: 10) {
-                        ForEach(shown) { IdeaCard(idea: $0, query: query) }
+                        ForEach(shown) { idea in
+                            IdeaCard(idea: idea, query: query)
+                                .onDrag {
+                                    dragging = idea.id
+                                    return NSItemProvider(object: idea.title as NSString)
+                                }
+                                .onDrop(of: [.text], delegate: CardDrop(target: idea.id, dragging: $dragging, store: store))
+                        }
                     }
                     .padding(.horizontal, 14)
                     .padding(.bottom, 14)
@@ -84,6 +93,25 @@ struct IdeasView: View {
     private func closeSearch() {
         query = ""
         searching = false
+    }
+}
+
+/// Reorders live as a dragged card passes over the others.
+private struct CardDrop: DropDelegate {
+    let target: UUID
+    @Binding var dragging: UUID?
+    let store: IdeaStore
+
+    func dropEntered(info: DropInfo) {
+        guard let dragging else { return }
+        withAnimation(.snappy(duration: 0.2)) { store.move(dragging, to: target) }
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? { DropProposal(operation: .move) }
+
+    func performDrop(info: DropInfo) -> Bool {
+        dragging = nil
+        return true
     }
 }
 
