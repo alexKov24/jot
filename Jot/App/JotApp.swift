@@ -2,8 +2,8 @@
 import SwiftUI
 
 extension KeyboardShortcuts.Name {
-    static let capture = Self("capture", default: .init(.j, modifiers: [.control, .option]))
-    static let list = Self("list", default: .init(.l, modifiers: [.control, .option]))
+    static let capture = Self("capture", initial: .init(.j, modifiers: [.control, .option]))
+    static let list = Self("list", initial: .init(.l, modifiers: [.control, .option]))
 }
 
 @main
