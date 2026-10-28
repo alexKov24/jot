@@ -11,7 +11,7 @@ struct JotApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var app
 
     var body: some Scene {
-        MenuBarExtra("Jot", systemImage: "lightbulb.max") {
+        MenuBarExtra("Jot", image: "MenuBarIcon") {
             MenuContent(app: app)
         }
         Settings {
