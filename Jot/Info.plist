@@ -26,5 +26,7 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>© 2026 Alex Kovalev</string>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>Jot adds a reminder when a note asks to be reminded at a time.</string>
 </dict>
 </plist>
