@@ -1,6 +1,8 @@
 <div align="center">
 
-# 💡 Jot
+<img src="docs/logo.svg" width="128" alt="Jot logo">
+
+# Jot
 
 **Capture a half-formed idea in two seconds. Get back a real plan.**
 
