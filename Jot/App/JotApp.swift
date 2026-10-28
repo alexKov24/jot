@@ -32,8 +32,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         .environment(AppSettings.shared)
     }
-    private lazy var list = PanelController(closesOnResign: false) { [unowned self] _ in
-        IdeasView().environment(self.store)
+    private lazy var list = PanelController(closesOnResign: false) { [unowned self] close in
+        IdeasView(onClose: close).environment(self.store)
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
