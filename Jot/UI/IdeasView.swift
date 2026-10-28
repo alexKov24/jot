@@ -126,6 +126,11 @@ private struct IdeaCard: View {
             HStack(alignment: .firstTextBaseline) {
                 Text(highlight(idea.title, query)).font(.headline)
                 Spacer()
+                if let date = idea.remindAt {
+                    Label(date.formatted(Calendar.current.isDateInToday(date) ? .dateTime.hour().minute() : .dateTime.weekday().hour().minute()), systemImage: "bell.fill")
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(Color.amber)
+                }
                 status
             }
             if idea.title != idea.note {

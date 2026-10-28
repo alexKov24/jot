@@ -86,6 +86,7 @@ final class IdeaStore {
                 update(id) {
                     $0.title = result.title
                     $0.items = result.items.map { ChecklistItem(text: $0) }
+                    $0.remindAt = AI.remindDate(result.remindAt)
                     $0.status = .ready
                 }
             } catch {
@@ -93,6 +94,15 @@ final class IdeaStore {
                     $0.status = .failed
                     $0.error = error.localizedDescription
                 }
+                return
+            }
+            // The checklist is fine even if Reminders fails; show the error with Retry.
+            guard let idea = ideas.first(where: { $0.id == id }), let date = idea.remindAt else { return }
+            do {
+                let reminderID = try await Reminders.save(idea, at: date)
+                update(id) { $0.reminderID = reminderID }
+            } catch {
+                update(id) { $0.error = error.localizedDescription }
             }
         }
     }

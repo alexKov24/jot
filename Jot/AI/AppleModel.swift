@@ -7,8 +7,10 @@ enum AppleModel {
     struct Plan {
         @Guide(description: "Short title, at most 8 words")
         var title: String
-        @Guide(description: "3 to 8 concrete actions, each starting with a verb")
+        @Guide(description: "3 to 8 concrete actions, each starting with a verb, or the note's own list")
         var items: [String]
+        @Guide(description: "Requested reminder time as yyyy-MM-dd HH:mm, or empty")
+        var remindAt: String
     }
 
     /// nil when ready, otherwise why it can't run.
@@ -26,6 +28,6 @@ enum AppleModel {
         if let reason = unavailableReason { throw AIError.unavailable(reason) }
         let session = LanguageModelSession(instructions: AI.instructions)
         let plan = try await session.respond(to: note, generating: Plan.self).content
-        return Expansion(title: plan.title, items: plan.items)
+        return Expansion(title: plan.title, items: plan.items, remindAt: plan.remindAt)
     }
 }

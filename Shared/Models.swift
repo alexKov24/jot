@@ -16,6 +16,9 @@ struct Idea: Codable, Identifiable, Hashable, Sendable {
     var status: Status = .expanding
     var error: String?
     var createdAt = Date()
+    var remindAt: Date?
+    /// Apple Reminders calendar item identifier.
+    var reminderID: String?
 
     var openItems: [ChecklistItem] { items.filter { !$0.done } }
 }
