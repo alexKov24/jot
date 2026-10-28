@@ -39,6 +39,7 @@ A native macOS menu bar app: press a shortcut, type a rough thought, and an AI m
 - **Menu bar app**, no Dock icon, launch at login
 - **Global shortcuts** you can rebind in Settings
 - **Desktop widget** (medium and large sizes) with click-to-tick items
+- **Reminders**: end a note with "remind me at 16:00" and Jot adds it to Apple Reminders, which alerts on your Mac and iPhone
 - **Bring your own model**, switchable in Settings → Models:
 
   | Provider | Runs | Needs |

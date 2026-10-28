@@ -67,6 +67,8 @@ enum Provider: String, CaseIterable, Identifiable, Codable, Sendable {
 struct Expansion: Codable, Sendable {
     var title: String
     var items: [String]
+    /// Local "yyyy-MM-dd HH:mm", or empty when the note names no time.
+    var remindAt: String
 }
 
 /// Everything one AI call needs, captured on the main actor.
@@ -97,12 +99,28 @@ enum AIError: LocalizedError {
 }
 
 enum AI {
-    static let instructions = """
-    You turn a quick, rough note into an actionable plan.
-    Return a short title (at most 8 words) and 3 to 8 checklist items.
-    Each item is one concrete action that starts with a verb and is specific to the note: \
-    name the tools, versions and comparisons involved. No fluff, no numbering.
-    """
+    static var instructions: String {
+        let now = Date.now.formatted(.dateTime.weekday(.wide).year().month().day().hour().minute())
+        return """
+        You turn a quick, rough note into a short title (at most 8 words) and a checklist.
+        If the note lists things, such as groceries to buy or things to pack, the items are exactly \
+        those things, one per item (for example "Buy milk"), and nothing else.
+        Otherwise give 3 to 8 concrete actions that start with a verb and are specific to the note, \
+        using the tools, versions and comparisons it mentions. No fluff, no numbering.
+        If the note asks to be reminded at a time, set remindAt to that local time as "yyyy-MM-dd HH:mm" \
+        (a time already past today means tomorrow). Otherwise set remindAt to "".
+        It is now \(now).
+        """
+    }
+
+    /// Parses `Expansion.remindAt`; nil when empty, malformed or in the past.
+    static func remindDate(_ text: String) -> Date? {
+        let format = DateFormatter()
+        format.dateFormat = "yyyy-MM-dd HH:mm"
+        format.locale = Locale(identifier: "en_US_POSIX")
+        guard let date = format.date(from: text), date > .now else { return nil }
+        return date
+    }
 
     static func schema() -> [String: Any] {
         [
@@ -110,8 +128,9 @@ enum AI {
             "properties": [
                 "title": ["type": "string"],
                 "items": ["type": "array", "items": ["type": "string"]],
+                "remindAt": ["type": "string"],
             ],
-            "required": ["title", "items"],
+            "required": ["title", "items", "remindAt"],
             "additionalProperties": false,
         ]
     }
