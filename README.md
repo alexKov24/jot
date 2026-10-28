@@ -11,7 +11,6 @@ A native macOS menu bar app: press a shortcut, type a rough thought, and an AI m
 ![macOS 26+](https://img.shields.io/badge/macOS-26%2B-black?logo=apple)
 ![Swift 6](https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white)
 ![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-0A84FF)
-![Sandboxed](https://img.shields.io/badge/App%20Sandbox-on-34C759)
 
 </div>
 
@@ -45,23 +44,21 @@ A native macOS menu bar app: press a shortcut, type a rough thought, and an AI m
   | Provider | Runs | Needs |
   |---|---|---|
   | Apple On-Device | Locally, offline, free | Apple Intelligence enabled |
-  | Anthropic | Cloud. Defaults to Claude Opus 5.5 | API key |
-  | OpenAI | Cloud | API key |
-  | Google Gemini | Cloud | API key |
+  | Claude Code | Cloud, via `claude -p` | `claude` installed and signed in |
+  | Codex | Cloud, via `codex exec` | `codex` installed and signed in |
+  | Gemini CLI | Cloud, via `gemini -p` | `gemini` installed and signed in |
   | Ollama | Locally | Ollama running |
 
 - **Your data, your folder**: ideas are saved as plain `jot.json` in a folder you choose
-- **Keys in Keychain**: never written to disk in plain text
+- **No API keys**: cloud models run through the CLIs you already use, with their own sign-in. Settings shows which are installed and signed in
 
 ## Privacy & permissions
 
-Jot runs in the App Sandbox with the smallest set of permissions:
+Jot is not sandboxed: it runs your AI CLIs as child processes, and they need their own config and login in your home folder. The widget stays sandboxed.
 
-| Permission | Why |
-|---|---|
-| User-selected folder (read/write) | Save `jot.json` where you choose |
-| Outgoing network | Talk to the AI provider you picked, and only that one |
-| App Group | Share a snapshot with the widget |
+- Each note goes only to the provider you picked
+- CLIs run headless with tools off (Claude Code) or a read-only sandbox (Codex), in a temp folder
+- An App Group shares a snapshot with the widget
 
 No analytics, no accounts, no server of its own. With Apple On-Device or Ollama, nothing leaves your Mac.
 
@@ -82,7 +79,7 @@ Set your own `DEVELOPMENT_TEAM` and App Group ID in `project.yml` and `Shared/Ap
 ```
 Jot/
   App/        App entry, menu bar, hotkeys
-  AI/         Provider clients (Anthropic, OpenAI-compatible, Apple)
+  AI/         Providers: headless CLIs, Ollama, Apple
   Store/      Ideas, settings, folder access
   UI/         Capture panel, ideas list, Settings
 JotWidget/    WidgetKit extension + tick intent

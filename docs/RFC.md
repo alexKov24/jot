@@ -6,7 +6,7 @@
 
 ## Platform
 - macOS 26+, Apple Silicon. SwiftUI + AppKit panels. Menu bar app (`LSUIElement`), no Dock icon.
-- Production setup from day one: App Sandbox, Hardened Runtime, versioned bundle, entitlements minimal.
+- Hardened Runtime, versioned bundle, entitlements minimal. App not sandboxed (runs user CLIs); widget sandboxed.
 - Distribution later: Developer ID + notarization or Mac App Store. Both need the $99/yr Apple Developer Program. Local builds use the free Apple Development cert.
 
 ## UI
@@ -23,9 +23,8 @@
 - **General**: both hotkeys, data folder, launch at login.
 - **Models**: provider switcher + model picker + per-provider connect window.
   - Apple on-device (Foundation Models framework, called directly; no key; shows availability).
-  - Anthropic (Opus 5.5 default; Sonnet 5.5, Haiku 5.5 from live `/v1/models`).
-  - OpenAI, Google Gemini (OpenAI-compatible endpoint), Ollama (local, base URL).
-  - Connect window: paste key → Verify (lists models) → saved in Keychain.
+  - Claude Code, Codex, Gemini CLI in headless mode; no API keys. Settings checks each is installed (login-shell PATH) and signed in (`claude auth status`, `codex login status`).
+  - Ollama (local, base URL).
 - Apple model note: wrappers like `apfel` expose it as an HTTP server; we don't need one since a native app calls the framework directly.
 
 ## Data
@@ -36,15 +35,16 @@
 
 ## AI contract
 - Input: raw note. Output JSON `{ title, items[] }`, 3–8 concrete steps.
-- Anthropic: Messages API, `output_config.format` json_schema, effort `low`, server-side refusal fallback.
-- OpenAI-compatible: `response_format` json_schema.
+- Claude Code: `claude -p --output-format json --json-schema … --tools "" --effort low`, read `structured_output`.
+- Codex: `codex exec --ephemeral -s read-only --output-schema <file>`, final message on stdout.
+- Gemini CLI: `gemini -p … --output-format json`, JSON asked for in the prompt.
+- Ollama: OpenAI-compatible `response_format` json_schema.
 - Apple: `@Generable` struct.
 
 ## Permissions
-- Folder access: user-selected (sandbox prompt via open panel).
+- Folder access: user-selected via open panel.
 - Network: outgoing client only.
 - Hotkeys: none needed (Carbon hotkeys).
-- Keychain: app's own items.
 
 ## Not in v1
 - Sync, editing checklist items by hand, search, markdown export, auto-update (Sparkle).

@@ -1,22 +1,11 @@
 import Foundation
 
-/// OpenAI Chat Completions shape. Also serves Gemini and Ollama through their OpenAI-compatible endpoints.
-struct OpenAICompatClient {
+/// Ollama through its OpenAI-compatible Chat Completions endpoint.
+struct OllamaClient {
     private let base: URL
-    private let key: String?
 
-    init(_ r: AIRequest) {
-        switch r.provider {
-        case .gemini: base = URL(string: "https://generativelanguage.googleapis.com/v1beta/openai/")!
-        case .ollama: base = (URL(string: r.ollamaURL) ?? URL(string: "http://localhost:11434")!).appending(path: "v1/")
-        default: base = URL(string: "https://api.openai.com/v1/")!
-        }
-        key = r.key
-    }
-
-    private var headers: [String: String] {
-        guard let key, !key.isEmpty else { return [:] }
-        return ["Authorization": "Bearer \(key)"]
+    init(url: String) {
+        base = (URL(string: url) ?? URL(string: "http://localhost:11434")!).appending(path: "v1/")
     }
 
     func expand(_ note: String, model: String) async throws -> Expansion {
@@ -37,7 +26,7 @@ struct OpenAICompatClient {
             ],
         ]
 
-        let request = try HTTP.json(base.appending(path: "chat/completions"), body: body, headers: headers)
+        let request = try HTTP.json(base.appending(path: "chat/completions"), body: body)
         let message = try await HTTP.send(request, as: Response.self).choices.first?.message
         if message?.refusal != nil { throw AIError.refused }
         guard let text = message?.content else { throw AIError.empty }
@@ -46,7 +35,7 @@ struct OpenAICompatClient {
 
     func models() async throws -> [String] {
         struct Response: Decodable { struct Model: Decodable { let id: String }; let data: [Model] }
-        let request = try HTTP.json(base.appending(path: "models"), headers: headers)
+        let request = try HTTP.json(base.appending(path: "models"))
         return try await HTTP.send(request, as: Response.self).data.map(\.id).sorted()
     }
 }
