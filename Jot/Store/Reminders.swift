@@ -25,6 +25,12 @@ enum Reminders {
 
     static let settingsURL = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Reminders")!
 
+    /// Removes the reminder; a reminder already deleted in the Reminders app is fine.
+    static func delete(_ id: String) throws {
+        guard let reminder = store.calendarItem(withIdentifier: id) as? EKReminder else { return }
+        try store.remove(reminder, commit: true)
+    }
+
     /// Creates the idea's reminder, or updates it if it already exists. Returns its identifier.
     static func save(_ idea: Idea, at date: Date) async throws -> String {
         guard try await store.requestFullAccessToReminders() else { throw Failure.denied }

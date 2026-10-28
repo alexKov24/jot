@@ -51,7 +51,10 @@ final class IdeaStore {
         save()
     }
 
-    func delete(_ id: UUID) {
+    func delete(_ id: UUID, reminder: Bool = false) {
+        if reminder, let reminderID = ideas.first(where: { $0.id == id })?.reminderID {
+            do { try Reminders.delete(reminderID) } catch { lastError = error.localizedDescription }
+        }
         ideas.removeAll { $0.id == id }
         save()
     }

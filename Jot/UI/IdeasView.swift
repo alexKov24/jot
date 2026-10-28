@@ -120,6 +120,7 @@ private struct IdeaCard: View {
     let idea: Idea
     let query: String
     @Environment(IdeaStore.self) private var store
+    @State private var confirmDelete = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -163,7 +164,15 @@ private struct IdeaCard: View {
             Button("Expand Again") { store.retry(idea.id) }
             Button("Copy as Markdown") { copy() }
             Divider()
-            Button("Delete", role: .destructive) { store.delete(idea.id) }
+            Button("Delete", role: .destructive) {
+                if idea.reminderID == nil { store.delete(idea.id) } else { confirmDelete = true }
+            }
+        }
+        .confirmationDialog("Delete calendar reminder?", isPresented: $confirmDelete) {
+            Button("Delete Idea and Reminder", role: .destructive) { store.delete(idea.id, reminder: true) }
+            Button("Delete Idea Only") { store.delete(idea.id) }
+        } message: {
+            Text("\"\(idea.title)\" also has a reminder in Apple Reminders.")
         }
     }
 
