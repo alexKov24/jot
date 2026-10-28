@@ -5,25 +5,27 @@ import SwiftUI
 final class FloatingPanel: NSPanel {
     private let closesOnResign: Bool
 
-    init(size: NSSize, closesOnResign: Bool, content: some View) {
+    init(closesOnResign: Bool, content: some View) {
         self.closesOnResign = closesOnResign
+        let hosting = NSHostingView(rootView: content)
         super.init(
-            contentRect: NSRect(origin: .zero, size: size),
-            styleMask: [.nonactivatingPanel, .titled, .fullSizeContentView],
+            contentRect: NSRect(origin: .zero, size: hosting.fittingSize),
+            styleMask: [.nonactivatingPanel, .borderless],
             backing: .buffered,
             defer: false
         )
         isFloatingPanel = true
         level = .floating
         collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-        titleVisibility = .hidden
-        titlebarAppearsTransparent = true
+        // The SwiftUI content draws its own rounded background and rim.
+        backgroundColor = .clear
+        isOpaque = false
+        hasShadow = true
         isMovableByWindowBackground = true
         hidesOnDeactivate = false
         isReleasedWhenClosed = false
         animationBehavior = .utilityWindow
-        [.closeButton, .miniaturizeButton, .zoomButton].forEach { standardWindowButton($0)?.isHidden = true }
-        contentView = NSHostingView(rootView: content.ignoresSafeArea())
+        contentView = hosting
     }
 
     override var canBecomeKey: Bool { true }
@@ -40,13 +42,11 @@ final class FloatingPanel: NSPanel {
 /// Builds a fresh panel on each show, so text fields start empty and focused.
 @MainActor
 final class PanelController {
-    private let size: NSSize
     private let closesOnResign: Bool
     private let content: (_ close: @escaping () -> Void) -> AnyView
     private var panel: FloatingPanel?
 
-    init(size: NSSize, closesOnResign: Bool, @ViewBuilder content: @escaping (_ close: @escaping () -> Void) -> some View) {
-        self.size = size
+    init(closesOnResign: Bool, @ViewBuilder content: @escaping (_ close: @escaping () -> Void) -> some View) {
         self.closesOnResign = closesOnResign
         self.content = { AnyView(content($0)) }
     }
@@ -57,7 +57,8 @@ final class PanelController {
 
     func show() {
         panel?.close()
-        let panel = FloatingPanel(size: size, closesOnResign: closesOnResign, content: content { [weak self] in self?.panel?.close() })
+        let panel = FloatingPanel(closesOnResign: closesOnResign, content: content { [weak self] in self?.panel?.close() })
+        let size = panel.frame.size
         if let screen = NSScreen.main?.visibleFrame {
             // Upper third of the active screen, like Spotlight.
             panel.setFrameOrigin(NSPoint(x: screen.midX - size.width / 2, y: screen.minY + screen.height * 0.68 - size.height / 2))
