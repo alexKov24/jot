@@ -6,12 +6,13 @@ struct IdeasView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
+            HStack(spacing: 10) {
+                PixelJ()
                 Text("Ideas").font(.title2.bold())
                 Spacer()
                 Text("\(store.ideas.count)")
                     .font(.callout.monospacedDigit())
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.amber)
             }
             .padding(.horizontal, 20)
             .padding(.top, 22)
@@ -26,11 +27,11 @@ struct IdeasView: View {
             }
 
             if store.ideas.isEmpty {
-                ContentUnavailableView(
-                    "No ideas yet",
-                    systemImage: "lightbulb",
-                    description: Text("Press \(KeyboardShortcuts.getShortcut(for: .capture)?.description ?? "your shortcut") to capture one.")
-                )
+                ContentUnavailableView {
+                    Label { Text("No ideas yet") } icon: { PixelJ(cell: 4) }
+                } description: {
+                    Text("Press \(KeyboardShortcuts.getShortcut(for: .capture)?.description ?? "your shortcut") to capture one.")
+                }
                 .frame(maxHeight: .infinity)
             } else {
                 ScrollView {
@@ -43,7 +44,8 @@ struct IdeasView: View {
             }
         }
         .frame(width: 440, height: 600)
-        .background(.regularMaterial)
+        .tint(.amber)
+        .modifier(PanelChrome())
     }
 }
 
@@ -101,7 +103,7 @@ private struct IdeaCard: View {
         case .ready:
             Text("\(idea.items.count - idea.openItems.count)/\(idea.items.count)")
                 .font(.caption.monospacedDigit())
-                .foregroundStyle(.secondary)
+                .foregroundStyle(idea.openItems.isEmpty ? AnyShapeStyle(Color.amber) : AnyShapeStyle(.secondary))
         }
     }
 

@@ -25,14 +25,14 @@ struct JotApp: App {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let store = IdeaStore()
-    private lazy var capture = PanelController(size: NSSize(width: 580, height: 96), closesOnResign: true) { [unowned self] close in
+    private lazy var capture = PanelController(closesOnResign: true) { [unowned self] close in
         CaptureView { note in
             self.store.add(note)
             close()
         }
         .environment(AppSettings.shared)
     }
-    private lazy var list = PanelController(size: NSSize(width: 440, height: 600), closesOnResign: false) { [unowned self] _ in
+    private lazy var list = PanelController(closesOnResign: false) { [unowned self] _ in
         IdeasView().environment(self.store)
     }
 

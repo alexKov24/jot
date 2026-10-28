@@ -81,7 +81,7 @@ struct IdeasWidgetView: View {
     var body: some View {
         if rows.isEmpty {
             VStack(spacing: 6) {
-                Image(systemName: "lightbulb.max").font(.title2).foregroundStyle(.tint)
+                PixelJ(cell: 3)
                 Text("All clear").font(.headline)
                 Text("Capture an idea from the menu bar.").font(.caption).foregroundStyle(.secondary)
             }
@@ -97,7 +97,7 @@ struct IdeasWidgetView: View {
                             Label {
                                 Text(item.text).lineLimit(1)
                             } icon: {
-                                Image(systemName: "circle").foregroundStyle(.secondary)
+                                Image(systemName: "circle").foregroundStyle(Color.amber)
                             }
                             .font(.caption)
                         }
