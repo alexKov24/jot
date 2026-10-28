@@ -10,20 +10,19 @@
 		24750449133E42338E0B35A8 /* CaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34C90C2F84D1E558280151F /* CaptureView.swift */; };
 		2545455EE1FCD461700B5A59 /* FloatingPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F9DF3DE7183A5910C388808 /* FloatingPanel.swift */; };
 		2A912C9189D2C16CAB4E382F /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601547FC89D704EC0DD1F44 /* AppGroup.swift */; };
+		2B7C5A380169F2F592532E83 /* OllamaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B922D167CB9DA6B95130E0F /* OllamaClient.swift */; };
 		2C4A670A467C8700B409C32E /* Reminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8623D731DD8286771433FC7E /* Reminders.swift */; };
-		3F95922CDC12ABCD99271997 /* AnthropicClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95EDAC78331233F5FA2B0353 /* AnthropicClient.swift */; };
 		413F1417A7B21C5231894D88 /* IdeasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AECF491D23638DA6590DDECC /* IdeasView.swift */; };
 		48F2D3AD275BC4B357FA2FDC /* JotWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A8DCF2B331A3829326E04DF7 /* JotWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4B9E7105958BF523A833D5B4 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C77F105F90D7B2F0C8E041 /* Models.swift */; };
 		55FDB6CA52F4313E537FFD0B /* ModelSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EF21DEA95C7BD0326A974E /* ModelSettings.swift */; };
 		6270DFDD2DEC7AEF406F1C7C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA2061D47F5C2898662DF08B /* Assets.xcassets */; };
+		658912EDF8158ECDCBD8574A /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7B5830E1FD454BCDE4FA42 /* CLI.swift */; };
 		74CA74BAEC354EC88CA95D98 /* FolderAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39D78D10CBAC973656D6A49C /* FolderAccess.swift */; };
 		813955C71AFA1C1BF82C4999 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256BEE884B390615B1B1F38B /* AppSettings.swift */; };
 		88266292AD2C0063A9756D99 /* Brand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9B4885C2CC53344EDBA2C2 /* Brand.swift */; };
-		89F704B27522DF2CE4C14F71 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E90934ABAD2F69016EA55A /* Keychain.swift */; };
 		A20E83F750E44158353D44FA /* IdeaStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E2F50F07AA750F4E4D437 /* IdeaStore.swift */; };
 		A67EB7F7F3A904E4D7CBC576 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD776FD7B409F140DE7B6139 /* SettingsView.swift */; };
-		AF585BFB93D1B261F54DC806 /* OpenAICompatClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35268BFD9F94FFC187943F70 /* OpenAICompatClient.swift */; };
 		B07A480678D24B6F2F229384 /* Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C5A826CDDC492E2E30D71C /* Provider.swift */; };
 		B8D422B47963707C50466D30 /* Brand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9B4885C2CC53344EDBA2C2 /* Brand.swift */; };
 		BA9235C08CEF43D24FF8597B /* AppleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F225EE3FE50010884114EEE /* AppleModel.swift */; };
@@ -60,10 +59,10 @@
 
 /* Begin PBXFileReference section */
 		0466A43A689B0FCA32F6DF97 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		19E90934ABAD2F69016EA55A /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		0A7B5830E1FD454BCDE4FA42 /* CLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLI.swift; sourceTree = "<group>"; };
+		1B922D167CB9DA6B95130E0F /* OllamaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OllamaClient.swift; sourceTree = "<group>"; };
 		1F9DF3DE7183A5910C388808 /* FloatingPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanel.swift; sourceTree = "<group>"; };
 		256BEE884B390615B1B1F38B /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
-		35268BFD9F94FFC187943F70 /* OpenAICompatClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAICompatClient.swift; sourceTree = "<group>"; };
 		39D78D10CBAC973656D6A49C /* FolderAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderAccess.swift; sourceTree = "<group>"; };
 		40A3B7E94AEA3929C18DDCC4 /* JotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JotApp.swift; sourceTree = "<group>"; };
 		598E2F50F07AA750F4E4D437 /* IdeaStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdeaStore.swift; sourceTree = "<group>"; };
@@ -73,7 +72,6 @@
 		7F8706CA0A472D88DA09E8DC /* Jot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Jot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8623D731DD8286771433FC7E /* Reminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminders.swift; sourceTree = "<group>"; };
 		8F9B4885C2CC53344EDBA2C2 /* Brand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Brand.swift; sourceTree = "<group>"; };
-		95EDAC78331233F5FA2B0353 /* AnthropicClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnthropicClient.swift; sourceTree = "<group>"; };
 		9601547FC89D704EC0DD1F44 /* AppGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroup.swift; sourceTree = "<group>"; };
 		A8DCF2B331A3829326E04DF7 /* JotWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = JotWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		AECF491D23638DA6590DDECC /* IdeasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdeasView.swift; sourceTree = "<group>"; };
@@ -157,10 +155,9 @@
 		810BD6CEE69A789A7DFA8640 /* AI */ = {
 			isa = PBXGroup;
 			children = (
-				95EDAC78331233F5FA2B0353 /* AnthropicClient.swift */,
 				5F225EE3FE50010884114EEE /* AppleModel.swift */,
-				19E90934ABAD2F69016EA55A /* Keychain.swift */,
-				35268BFD9F94FFC187943F70 /* OpenAICompatClient.swift */,
+				0A7B5830E1FD454BCDE4FA42 /* CLI.swift */,
+				1B922D167CB9DA6B95130E0F /* OllamaClient.swift */,
 				C1C5A826CDDC492E2E30D71C /* Provider.swift */,
 			);
 			path = AI;
@@ -314,21 +311,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3F95922CDC12ABCD99271997 /* AnthropicClient.swift in Sources */,
 				2A912C9189D2C16CAB4E382F /* AppGroup.swift in Sources */,
 				813955C71AFA1C1BF82C4999 /* AppSettings.swift in Sources */,
 				BA9235C08CEF43D24FF8597B /* AppleModel.swift in Sources */,
 				B8D422B47963707C50466D30 /* Brand.swift in Sources */,
+				658912EDF8158ECDCBD8574A /* CLI.swift in Sources */,
 				24750449133E42338E0B35A8 /* CaptureView.swift in Sources */,
 				2545455EE1FCD461700B5A59 /* FloatingPanel.swift in Sources */,
 				74CA74BAEC354EC88CA95D98 /* FolderAccess.swift in Sources */,
 				A20E83F750E44158353D44FA /* IdeaStore.swift in Sources */,
 				413F1417A7B21C5231894D88 /* IdeasView.swift in Sources */,
 				C1253963480980F0FA9F1AEC /* JotApp.swift in Sources */,
-				89F704B27522DF2CE4C14F71 /* Keychain.swift in Sources */,
 				55FDB6CA52F4313E537FFD0B /* ModelSettings.swift in Sources */,
 				FF3C24B4E1C2AF0B66B608BE /* Models.swift in Sources */,
-				AF585BFB93D1B261F54DC806 /* OpenAICompatClient.swift in Sources */,
+				2B7C5A380169F2F592532E83 /* OllamaClient.swift in Sources */,
 				B07A480678D24B6F2F229384 /* Provider.swift in Sources */,
 				2C4A670A467C8700B409C32E /* Reminders.swift in Sources */,
 				A67EB7F7F3A904E4D7CBC576 /* SettingsView.swift in Sources */,

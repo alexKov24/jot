@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ModelSettings: View {
     @Environment(AppSettings.self) private var settings
-    @State private var connecting: Provider?
+    @State private var connectingOllama = false
 
     var body: some View {
         @Bindable var settings = settings
@@ -12,24 +12,35 @@ struct ModelSettings: View {
                     ForEach(Provider.allCases) { p in
                         Label(p.name, systemImage: p.symbol)
                             .tag(p)
-                            .selectionDisabled(!settings.connected.contains(p))
+                            .selectionDisabled(settings.problems[p] != nil)
                     }
                 }
                 if settings.provider != .apple {
                     ModelPicker(provider: settings.provider)
                 }
-                if settings.provider == .apple, let reason = AppleModel.unavailableReason {
-                    Label(reason, systemImage: "exclamationmark.triangle").foregroundStyle(.orange)
+                if let problem = settings.problems[settings.provider] {
+                    Label(problem, systemImage: "exclamationmark.triangle").foregroundStyle(.orange)
                 }
             }
-            Section("Providers") {
+            Section {
                 ForEach(Provider.allCases) { p in
-                    ProviderRow(provider: p) { connecting = p }
+                    ProviderRow(provider: p) { connectingOllama = true }
                 }
+            } header: {
+                Text("Providers")
+            } footer: {
+                HStack {
+                    Text("Claude Code, Codex and Gemini CLI run in headless mode with their own sign-in. Jot stores no keys.")
+                    Spacer()
+                    Button("Check Again") { Task { await settings.check() } }
+                        .disabled(settings.checking)
+                }
+                .font(.caption).foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)
-        .sheet(item: $connecting) { ConnectSheet(provider: $0) }
+        .task { await settings.check() }
+        .sheet(isPresented: $connectingOllama) { OllamaSheet() }
     }
 }
 
@@ -41,11 +52,12 @@ private struct ModelPicker: View {
         let selection = Binding(get: { settings.model(for: provider) }, set: { settings.setModel($0, for: provider) })
         let models = settings.models(for: provider)
         if models.isEmpty {
-            TextField("Model", text: selection, prompt: Text("model id"))
+            TextField("Model", text: selection, prompt: Text(provider == .ollama ? "model id" : "CLI default"))
         } else {
             Picker("Model", selection: selection) {
+                if provider != .ollama { Text("CLI default").tag("") }
                 ForEach(models, id: \.self) { Text($0).tag($0) }
-                if !models.contains(selection.wrappedValue) {
+                if !selection.wrappedValue.isEmpty, !models.contains(selection.wrappedValue) {
                     Text(selection.wrappedValue).tag(selection.wrappedValue)
                 }
             }
@@ -55,57 +67,46 @@ private struct ModelPicker: View {
 
 private struct ProviderRow: View {
     let provider: Provider
-    let onConnect: () -> Void
+    let onConnectOllama: () -> Void
     @Environment(AppSettings.self) private var settings
 
     var body: some View {
         HStack {
             Label(provider.name, systemImage: provider.symbol)
             Spacer()
-            switch provider {
-            case .apple:
-                Text(AppleModel.unavailableReason == nil ? "Available" : "Unavailable")
-                    .foregroundStyle(.secondary)
-            case .ollama:
-                Button(settings.models(for: provider).isEmpty ? "Connect…" : "Refresh…", action: onConnect)
-            default:
-                if settings.connected.contains(provider) {
-                    Text("Connected").foregroundStyle(.secondary)
-                    Button("Disconnect") { settings.disconnect(provider) }
-                } else {
-                    Button("Connect…", action: onConnect)
+            if provider == .ollama {
+                Button(settings.models(for: provider).isEmpty ? "Connect…" : "Refresh…", action: onConnectOllama)
+            } else if settings.checking && settings.problems[provider] == nil {
+                ProgressView().controlSize(.small)
+            } else if let problem = settings.problems[provider] {
+                Text(problem).foregroundStyle(.secondary)
+                if problem == "Not installed", let page = provider.installPage {
+                    Link("Install", destination: page)
+                } else if let command = provider.loginCommand {
+                    Text("Run `\(command)` in Terminal").font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
                 }
+            } else {
+                Text(provider == .apple ? "Available" : "Ready").foregroundStyle(.secondary)
             }
         }
     }
 }
 
-/// Paste a key (or Ollama URL), verify it by listing models, then save.
-private struct ConnectSheet: View {
-    let provider: Provider
+/// Enter the Ollama URL, verify it by listing models, then save.
+private struct OllamaSheet: View {
     @Environment(AppSettings.self) private var settings
     @Environment(\.dismiss) private var dismiss
-    @State private var key = ""
     @State private var url = ""
     @State private var busy = false
     @State private var error: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Label("Connect \(provider.name)", systemImage: provider.symbol).font(.title3.bold())
+            Label("Connect \(Provider.ollama.name)", systemImage: Provider.ollama.symbol).font(.title3.bold())
 
-            if provider == .ollama {
-                TextField("Server URL", text: $url, prompt: Text("http://localhost:11434"))
-                Text("Ollama must be running. Jot lists the models you've pulled.")
-                    .font(.caption).foregroundStyle(.secondary)
-            } else {
-                SecureField("API key", text: $key)
-                HStack(spacing: 4) {
-                    Text("Stored in your Keychain.")
-                    if let page = provider.keyPage { Link("Get a key", destination: page) }
-                }
+            TextField("Server URL", text: $url, prompt: Text("http://localhost:11434"))
+            Text("Ollama must be running. Jot lists the models you've pulled.")
                 .font(.caption).foregroundStyle(.secondary)
-            }
 
             if let error {
                 Text(error).font(.caption).foregroundStyle(.red).textSelection(.enabled)
@@ -120,7 +121,7 @@ private struct ConnectSheet: View {
                     if busy { ProgressView().controlSize(.small) } else { Text("Verify & Save") }
                 }
                 .keyboardShortcut(.defaultAction)
-                .disabled(busy || (provider.needsKey && key.isEmpty))
+                .disabled(busy)
             }
         }
         .textFieldStyle(.roundedBorder)
@@ -132,9 +133,9 @@ private struct ConnectSheet: View {
     private func verify() async {
         busy = true
         defer { busy = false }
-        if provider == .ollama { settings.ollamaURL = url.isEmpty ? "http://localhost:11434" : url }
+        settings.ollamaURL = url.isEmpty ? "http://localhost:11434" : url
         do {
-            try await settings.connect(provider, key: provider.needsKey ? key.trimmingCharacters(in: .whitespacesAndNewlines) : nil)
+            try await settings.connectOllama()
             dismiss()
         } catch {
             self.error = error.localizedDescription

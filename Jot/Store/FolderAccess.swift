@@ -4,9 +4,9 @@ import AppKit
 enum FolderAccess {
     private static let key = "folderBookmark"
 
-    /// Used until the user picks a folder: the app's own sandbox container.
+    /// Used until the user picks a folder.
     static var fallback: URL {
-        let url = URL.applicationSupportDirectory
+        let url = URL.applicationSupportDirectory.appending(path: "Jot")
         try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }
@@ -34,9 +34,8 @@ enum FolderAccess {
     static func resolve() -> URL? {
         guard let data = UserDefaults.standard.data(forKey: key) else { return nil }
         var stale = false
-        guard let url = try? URL(resolvingBookmarkData: data, options: .withSecurityScope, bookmarkDataIsStale: &stale),
-              url.startAccessingSecurityScopedResource()
-        else { return nil }
+        guard let url = try? URL(resolvingBookmarkData: data, options: .withSecurityScope, bookmarkDataIsStale: &stale) else { return nil }
+        _ = url.startAccessingSecurityScopedResource() // Returns false outside the sandbox; access works anyway.
         if stale { try? save(url) }
         return url
     }

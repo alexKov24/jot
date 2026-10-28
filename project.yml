@@ -30,7 +30,7 @@ targets:
     entitlements:
       path: Jot/Jot.entitlements
       properties:
-        com.apple.security.app-sandbox: true
+        # Not sandboxed: Jot runs the user's AI CLIs, which need their own config and login.
         com.apple.security.network.client: true
         com.apple.security.personal-information.calendars: true
         com.apple.security.files.user-selected.read-write: true

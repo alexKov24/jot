@@ -21,42 +21,46 @@ final class AppSettings {
     var ollamaURL: String {
         didSet { defaults.set(ollamaURL, forKey: "ollamaURL") }
     }
-    private(set) var connected: Set<Provider> = []
+    /// Why each provider can't run right now; missing means ready. Filled by `check()`.
+    private(set) var problems: [Provider: String] = [:]
+    private(set) var checking = false
 
     private init() {
-        provider = Provider(rawValue: defaults.string(forKey: "provider") ?? "") ?? .anthropic
+        provider = Provider(rawValue: defaults.string(forKey: "provider") ?? "") ?? .claude
         chosenModels = defaults.dictionary(forKey: "models.chosen") as? [String: String] ?? [:]
         modelLists = defaults.dictionary(forKey: "models.lists") as? [String: [String]] ?? [:]
         ollamaURL = defaults.string(forKey: "ollamaURL") ?? "http://localhost:11434"
-        connected = Set(Provider.allCases.filter { !$0.needsKey || Keychain.get($0.rawValue) != nil })
+        Task { await check() }
     }
 
-    func model(for p: Provider) -> String { chosenModels[p.rawValue] ?? p.defaultModel }
+    func model(for p: Provider) -> String { chosenModels[p.rawValue] ?? "" }
     func setModel(_ model: String, for p: Provider) { chosenModels[p.rawValue] = model }
-    func models(for p: Provider) -> [String] { modelLists[p.rawValue] ?? [] }
+    func models(for p: Provider) -> [String] { modelLists[p.rawValue] ?? p.suggestedModels }
 
-    /// Verifies credentials by listing models, then stores the key and the list.
-    func connect(_ p: Provider, key: String?) async throws {
-        let list = try await AI.models(request(for: p, key: key))
-        if p.needsKey { Keychain.set(key, for: p.rawValue) }
-        modelLists[p.rawValue] = list
-        if !list.contains(model(for: p)), let first = list.first { setModel(first, for: p) }
-        connected.insert(p)
+    /// Looks for each CLI on the login-shell PATH and asks it whether it's signed in.
+    func check() async {
+        checking = true
+        defer { checking = false }
+        await withTaskGroup(of: (Provider, String?).self) { group in
+            for p in Provider.allCases { group.addTask { (p, await AI.problem(p)) } }
+            for await (p, problem) in group { problems[p] = problem }
+        }
     }
 
-    func disconnect(_ p: Provider) {
-        Keychain.set(nil, for: p.rawValue)
-        modelLists[p.rawValue] = nil
-        connected.remove(p)
+    /// Verifies the Ollama server by listing its models.
+    func connectOllama() async throws {
+        let list = try await OllamaClient(url: ollamaURL).models()
+        modelLists[Provider.ollama.rawValue] = list
+        if !list.contains(model(for: .ollama)), let first = list.first { setModel(first, for: .ollama) }
     }
 
-    func request(for p: Provider? = nil, key: String? = nil) -> AIRequest {
-        let p = p ?? provider
-        return AIRequest(provider: p, model: model(for: p), key: key ?? Keychain.get(p.rawValue), ollamaURL: ollamaURL)
+    func request() -> AIRequest {
+        AIRequest(provider: provider, model: model(for: provider), ollamaURL: ollamaURL)
     }
 
     /// Short label of the active model for the capture panel.
     var activeLabel: String {
-        provider == .apple ? provider.name : "\(provider.name) · \(model(for: provider))"
+        let model = model(for: provider)
+        return provider == .apple || model.isEmpty ? provider.name : "\(provider.name) · \(model)"
     }
 }
