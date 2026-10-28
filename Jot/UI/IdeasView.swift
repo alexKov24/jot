@@ -2,8 +2,6 @@ import KeyboardShortcuts
 import SwiftUI
 
 struct IdeasView: View {
-    let onClose: () -> Void
-
     @Environment(IdeaStore.self) private var store
     @State private var searching = false
     @State private var query = ""
@@ -37,11 +35,12 @@ struct IdeasView: View {
                     searching ? closeSearch() : openSearch()
                 }
                 .keyboardShortcut("f")
-                HeaderButton(symbol: "xmark", action: onClose)
             }
             .animation(.snappy(duration: 0.2), value: searching)
             .padding(.horizontal, 20)
-            .padding(.top, 22)
+            // Clear the traffic lights in the title bar.
+            .padding(.leading, 76)
+            .padding(.top, 13)
             .padding(.bottom, 12)
 
             if let error = store.lastError {
