@@ -130,9 +130,9 @@ private struct HeaderButton: View {
     }
 }
 
-/// Marks every match of `query` in amber.
+/// Renders inline Markdown (bold, italic, `code`, links, ~~strike~~) and marks every match of `query` in amber.
 private func highlight(_ text: String, _ query: String) -> AttributedString {
-    var result = AttributedString(text)
+    var result = (try? AttributedString(markdown: text, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))) ?? AttributedString(text)
     guard !query.isEmpty else { return result }
     var start = result.startIndex
     while let range = result[start...].range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) {
