@@ -1,3 +1,4 @@
+import EventKit
 import KeyboardShortcuts
 import ServiceManagement
 import SwiftUI
@@ -17,6 +18,7 @@ private struct GeneralSettings: View {
     @Environment(IdeaStore.self) private var store
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
     @State private var loginError: String?
+    @State private var remindersStatus = Reminders.status
 
     var body: some View {
         Form {
@@ -44,6 +46,31 @@ private struct GeneralSettings: View {
             } footer: {
                 Text("Ideas are saved as jot.json. Jot only has access to the folder you choose.")
                     .font(.caption).foregroundStyle(.secondary)
+            }
+            Section {
+                LabeledContent("Reminders") {
+                    switch remindersStatus {
+                    case .fullAccess:
+                        Label("Allowed", systemImage: "checkmark.circle.fill").foregroundStyle(.green)
+                    case .notDetermined:
+                        Button("Allow…") {
+                            Task {
+                                _ = await Reminders.requestAccess()
+                                remindersStatus = Reminders.status
+                            }
+                        }
+                    default:
+                        Button("Open System Settings…") { NSWorkspace.shared.open(Reminders.settingsURL) }
+                    }
+                }
+            } header: {
+                Text("Permissions")
+            } footer: {
+                Text("Jot adds a reminder when a note asks for one, like \"remind me at 16:00\". Reminders syncs it to your iPhone.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+                remindersStatus = Reminders.status
             }
             Section {
                 Toggle("Launch at login", isOn: $launchAtLogin)

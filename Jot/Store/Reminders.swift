@@ -16,6 +16,15 @@ enum Reminders {
         }
     }
 
+    static var status: EKAuthorizationStatus { EKEventStore.authorizationStatus(for: .reminder) }
+
+    /// Shows the system prompt the first time; afterwards only System Settings can change it.
+    static func requestAccess() async -> Bool {
+        (try? await store.requestFullAccessToReminders()) ?? false
+    }
+
+    static let settingsURL = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Reminders")!
+
     /// Creates the idea's reminder, or updates it if it already exists. Returns its identifier.
     static func save(_ idea: Idea, at date: Date) async throws -> String {
         guard try await store.requestFullAccessToReminders() else { throw Failure.denied }
