@@ -19,7 +19,6 @@ struct IdeasView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 10) {
-                PixelJ()
                 if searching {
                     TextField("Search ideas", text: $query)
                         .textFieldStyle(.plain)
@@ -27,7 +26,7 @@ struct IdeasView: View {
                         .focused($searchFocused)
                         .onExitCommand(perform: closeSearch)
                 } else {
-                    Text("Ideas").font(.title2.bold())
+                    PixelText("my jots")
                     Spacer()
                 }
                 Text("\(shown.count)")

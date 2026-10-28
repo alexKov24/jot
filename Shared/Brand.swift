@@ -10,22 +10,53 @@ extension Color {
 struct PixelJ: View {
     var cell: CGFloat = 2
 
-    private static let rows = ["...##", "...##", ".....", "...##", "...##", "...##", "...##", "...##", "...##", "##.##", ".###."]
+    var body: some View { PixelText("j", cell: cell) }
+}
+
+/// Lowercase pixel lettering in the style of the icon's "j", with the same amber gradient.
+struct PixelText: View {
+    let text: String
+    var cell: CGFloat = 2
+
+    init(_ text: String, cell: CGFloat = 2) {
+        self.text = text
+        self.cell = cell
+    }
+
+    /// 11 rows: ascender 0–2, x-height 3–8, descender 9–10. Strokes are 2 cells wide.
+    private static let glyphs: [Character: [String]] = [
+        "j": ["...##", "...##", ".....", "...##", "...##", "...##", "...##", "...##", "...##", "##.##", ".###."],
+        "m": ["........", "........", "........", "#######.", "########", "##.##.##", "##.##.##", "##.##.##", "##.##.##", "........", "........"],
+        "y": [".....", ".....", ".....", "##.##", "##.##", "##.##", "##.##", "##.##", ".####", "...##", "####."],
+        "o": [".....", ".....", ".....", ".###.", "##.##", "##.##", "##.##", "##.##", ".###.", ".....", "....."],
+        "t": ["....", ".##.", ".##.", "####", ".##.", ".##.", ".##.", ".##.", "..##", "....", "...."],
+        "s": [".....", ".....", ".....", ".####", "##...", ".###.", "...##", "...##", "####.", ".....", "....."],
+        " ": ["...", "...", "...", "...", "...", "...", "...", "...", "...", "...", "..."],
+    ]
+
+    private var glyphs: [[String]] { text.lowercased().compactMap { Self.glyphs[$0] } }
+    /// Glyph widths plus one empty column between letters.
+    private var columns: Int { glyphs.reduce(0) { $0 + $1[0].count } + max(glyphs.count - 1, 0) }
 
     var body: some View {
         Canvas { context, size in
             var path = Path()
-            for (r, row) in Self.rows.enumerated() {
-                for (c, ch) in row.enumerated() where ch == "#" {
-                    path.addRect(CGRect(x: CGFloat(c) * cell, y: CGFloat(r) * cell, width: cell, height: cell))
+            var x = 0
+            for glyph in glyphs {
+                for (r, row) in glyph.enumerated() {
+                    for (c, ch) in row.enumerated() where ch == "#" {
+                        path.addRect(CGRect(x: CGFloat(x + c) * cell, y: CGFloat(r) * cell, width: cell, height: cell))
+                    }
                 }
+                x += glyph[0].count + 1
             }
             context.fill(path, with: .linearGradient(
                 Gradient(colors: [.amberLight, .amberDark]),
                 startPoint: .zero, endPoint: CGPoint(x: 0, y: size.height)
             ))
         }
-        .frame(width: 5 * cell, height: 11 * cell)
+        .frame(width: CGFloat(columns) * cell, height: 11 * cell)
+        .accessibilityLabel(text)
     }
 }
 
