@@ -28,5 +28,25 @@
 	<string>© 2026 Alex Kovalev</string>
 	<key>NSRemindersFullAccessUsageDescription</key>
 	<string>Jot adds a reminder when a note asks to be reminded at a time.</string>
+	<key>NSServices</key>
+	<array>
+		<dict>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Copy to Jot</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>copyToJot</string>
+			<key>NSPortName</key>
+			<string>Jot</string>
+			<key>NSRequiredContext</key>
+			<dict/>
+			<key>NSSendTypes</key>
+			<array>
+				<string>public.utf8-plain-text</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

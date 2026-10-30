@@ -44,6 +44,14 @@ targets:
         LSApplicationCategoryType: public.app-category.productivity
         NSHumanReadableCopyright: © 2026 Alex Kovalev
         NSRemindersFullAccessUsageDescription: Jot adds a reminder when a note asks to be reminded at a time.
+        # Right-click selected text anywhere → "Copy to Jot".
+        NSServices:
+          - NSMenuItem:
+              default: Copy to Jot
+            NSMessage: copyToJot
+            NSPortName: Jot
+            NSSendTypes: [public.utf8-plain-text]
+            NSRequiredContext: {}
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.alexkovalev.jot
