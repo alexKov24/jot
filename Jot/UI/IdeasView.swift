@@ -1,10 +1,10 @@
 import KeyboardShortcuts
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct IdeasView: View {
-    let onClose: () -> Void
-
     @Environment(IdeaStore.self) private var store
+    @State private var dragging: UUID?
     @State private var searching = false
     @State private var query = ""
     @FocusState private var searchFocused: Bool
@@ -19,7 +19,6 @@ struct IdeasView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 10) {
-                PixelJ()
                 if searching {
                     TextField("Search ideas", text: $query)
                         .textFieldStyle(.plain)
@@ -27,7 +26,7 @@ struct IdeasView: View {
                         .focused($searchFocused)
                         .onExitCommand(perform: closeSearch)
                 } else {
-                    Text("Ideas").font(.title2.bold())
+                    PixelText("my jots")
                     Spacer()
                 }
                 Text("\(shown.count)")
@@ -37,11 +36,12 @@ struct IdeasView: View {
                     searching ? closeSearch() : openSearch()
                 }
                 .keyboardShortcut("f")
-                HeaderButton(symbol: "xmark", action: onClose)
             }
             .animation(.snappy(duration: 0.2), value: searching)
             .padding(.horizontal, 20)
-            .padding(.top, 22)
+            // Clear the traffic lights in the title bar.
+            .padding(.leading, 76)
+            .padding(.top, 13)
             .padding(.bottom, 12)
 
             if let error = store.lastError {
@@ -65,7 +65,14 @@ struct IdeasView: View {
             } else {
                 ScrollView {
                     LazyVStack(spacing: 10) {
-                        ForEach(shown) { IdeaCard(idea: $0, query: query) }
+                        ForEach(shown) { idea in
+                            IdeaCard(idea: idea, query: query)
+                                .onDrag {
+                                    dragging = idea.id
+                                    return NSItemProvider(object: idea.title as NSString)
+                                }
+                                .onDrop(of: [.text], delegate: CardDrop(target: idea.id, dragging: $dragging, store: store))
+                        }
                     }
                     .padding(.horizontal, 14)
                     .padding(.bottom, 14)
@@ -88,6 +95,25 @@ struct IdeasView: View {
     }
 }
 
+/// Reorders live as a dragged card passes over the others.
+private struct CardDrop: DropDelegate {
+    let target: UUID
+    @Binding var dragging: UUID?
+    let store: IdeaStore
+
+    func dropEntered(info: DropInfo) {
+        guard let dragging else { return }
+        withAnimation(.snappy(duration: 0.2)) { store.move(dragging, to: target) }
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? { DropProposal(operation: .move) }
+
+    func performDrop(info: DropInfo) -> Bool {
+        dragging = nil
+        return true
+    }
+}
+
 private struct HeaderButton: View {
     let symbol: String
     let action: () -> Void
@@ -104,9 +130,9 @@ private struct HeaderButton: View {
     }
 }
 
-/// Marks every match of `query` in amber.
+/// Renders inline Markdown (bold, italic, `code`, links, ~~strike~~) and marks every match of `query` in amber.
 private func highlight(_ text: String, _ query: String) -> AttributedString {
-    var result = AttributedString(text)
+    var result = (try? AttributedString(markdown: text, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))) ?? AttributedString(text)
     guard !query.isEmpty else { return result }
     var start = result.startIndex
     while let range = result[start...].range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) {

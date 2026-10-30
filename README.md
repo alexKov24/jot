@@ -36,7 +36,7 @@ into a checklist, a reminder or a plan that stays on your Mac.
 
 - **Captures your thought.** **⌃⌥J** opens a field for your jot over any app.
 - **Creates a plan.** Your favorite model adds a clean title and steps to your jot.
-- **One press away.** **⌃⌥L** opens the full list. Both shortcuts can be rebound.
+- **One press away.** **⌃⌥L** opens the full list; drag cards to reorder. Both shortcuts can be rebound.
 - **Lives on your desktop.** A widget (medium and large) shows your lists and ticks items with a click.
 - **Sets reminders from plain words.** Give a jot a time frame ("call alex at 16:00", "pay rent friday")
   and Jot adds it to Apple Reminders, which alerts on your Mac and iPhone. A day without a time

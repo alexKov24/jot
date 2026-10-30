@@ -51,6 +51,16 @@ final class IdeaStore {
         save()
     }
 
+    /// Puts `id` where `target` is now.
+    func move(_ id: UUID, to target: UUID) {
+        guard id != target,
+              let from = ideas.firstIndex(where: { $0.id == id }),
+              let to = ideas.firstIndex(where: { $0.id == target })
+        else { return }
+        ideas.move(fromOffsets: [from], toOffset: to > from ? to + 1 : to)
+        save()
+    }
+
     func delete(_ id: UUID, reminder: Bool = false) {
         if reminder, let reminderID = ideas.first(where: { $0.id == id })?.reminderID {
             do { try Reminders.delete(reminderID) } catch { lastError = error.localizedDescription }
