@@ -137,6 +137,9 @@ Yes.
 Yes, for 30 days, including jots that left on their own when you ticked the last step. The trash
 button in the list shows Recently Deleted, with Restore and Delete Now.
 
+**How do I update Jot?**
+On launch and once a day Jot checks GitHub for a newer release. If there is one, the menu bar menu shows **Update Available**, which opens the release page. **Check for Updates…** checks right away. Nothing downloads or installs on its own.
+
 ## Project layout
 
 ```text
@@ -157,7 +160,8 @@ docs/RFC.md   Design notes
 - [x] Search
 - [x] Markdown support and export
 - [x] Copy to Jot: save selected text from any app via right-click
-- [ ] Signed, notarized releases with auto-update (Sparkle)
+- [x] Update check against GitHub releases
+- [ ] Signed, notarized releases
 - [x] Soft delete: deleted jots stay for 30 days, then go for good
 - [x] Soft delete a jot once all its steps are done
 - [ ] Speech-to-text provider

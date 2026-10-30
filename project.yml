@@ -40,6 +40,8 @@ targets:
       path: Jot/Info.plist
       properties:
         CFBundleDisplayName: Jot
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSUIElement: true
         LSApplicationCategoryType: public.app-category.productivity
         NSHumanReadableCopyright: © 2026 Alex Kovalev

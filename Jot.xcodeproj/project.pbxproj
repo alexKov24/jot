@@ -13,6 +13,7 @@
 		2B7C5A380169F2F592532E83 /* OllamaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B922D167CB9DA6B95130E0F /* OllamaClient.swift */; };
 		2C4A670A467C8700B409C32E /* Reminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8623D731DD8286771433FC7E /* Reminders.swift */; };
 		413F1417A7B21C5231894D88 /* IdeasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AECF491D23638DA6590DDECC /* IdeasView.swift */; };
+		43120A6A49489B43B6CEA0A2 /* Updates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77886F9D72BE5FFD563D8970 /* Updates.swift */; };
 		48F2D3AD275BC4B357FA2FDC /* JotWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A8DCF2B331A3829326E04DF7 /* JotWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4B9E7105958BF523A833D5B4 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C77F105F90D7B2F0C8E041 /* Models.swift */; };
 		55FDB6CA52F4313E537FFD0B /* ModelSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EF21DEA95C7BD0326A974E /* ModelSettings.swift */; };
@@ -69,6 +70,7 @@
 		5F225EE3FE50010884114EEE /* AppleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleModel.swift; sourceTree = "<group>"; };
 		63904256978BB005A3739559 /* Jot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Jot.entitlements; sourceTree = "<group>"; };
 		66C77F105F90D7B2F0C8E041 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		77886F9D72BE5FFD563D8970 /* Updates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Updates.swift; sourceTree = "<group>"; };
 		7F8706CA0A472D88DA09E8DC /* Jot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Jot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8623D731DD8286771433FC7E /* Reminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminders.swift; sourceTree = "<group>"; };
 		8F9B4885C2CC53344EDBA2C2 /* Brand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Brand.swift; sourceTree = "<group>"; };
@@ -177,6 +179,7 @@
 			isa = PBXGroup;
 			children = (
 				40A3B7E94AEA3929C18DDCC4 /* JotApp.swift */,
+				77886F9D72BE5FFD563D8970 /* Updates.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -328,6 +331,7 @@
 				B07A480678D24B6F2F229384 /* Provider.swift in Sources */,
 				2C4A670A467C8700B409C32E /* Reminders.swift in Sources */,
 				A67EB7F7F3A904E4D7CBC576 /* SettingsView.swift in Sources */,
+				43120A6A49489B43B6CEA0A2 /* Updates.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
