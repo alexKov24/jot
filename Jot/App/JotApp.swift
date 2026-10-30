@@ -38,12 +38,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         store.start()
+        NSApp.servicesProvider = self
+        NSUpdateDynamicServices()
         KeyboardShortcuts.onKeyUp(for: .capture) { [unowned self] in capture.toggle() }
         KeyboardShortcuts.onKeyUp(for: .list) { [unowned self] in list.toggle() }
         if store.folder == nil, !UserDefaults.standard.bool(forKey: "askedForFolder") {
             UserDefaults.standard.set(true, forKey: "askedForFolder")
             store.chooseFolder()
         }
+    }
+
+    /// "Copy to Jot" service: saves the selected text as a new idea.
+    @objc func copyToJot(_ pboard: NSPasteboard, userData: String?, error: AutoreleasingUnsafeMutablePointer<NSString?>) {
+        guard let text = pboard.string(forType: .string) else { return }
+        store.add(text)
     }
 
     func showCapture() { capture.show() }
