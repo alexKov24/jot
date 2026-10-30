@@ -33,6 +33,7 @@ targets:
         # Not sandboxed: Jot runs the user's AI CLIs, which need their own config and login.
         com.apple.security.network.client: true
         com.apple.security.personal-information.calendars: true
+        com.apple.security.device.audio-input: true
         com.apple.security.files.user-selected.read-write: true
         com.apple.security.files.bookmarks.app-scope: true
         com.apple.security.application-groups: [FKB54TC53B.com.alexkovalev.jot]
@@ -54,6 +55,8 @@ targets:
             NSPortName: Jot
             NSSendTypes: [public.utf8-plain-text]
             NSRequiredContext: {}
+        NSMicrophoneUsageDescription: Jot listens while you dictate a note in the capture panel.
+        NSSpeechRecognitionUsageDescription: Jot turns your dictation into text on your Mac.
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.alexkovalev.jot

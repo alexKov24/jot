@@ -26,6 +26,8 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>© 2026 Alex Kovalev</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Jot listens while you dictate a note in the capture panel.</string>
 	<key>NSRemindersFullAccessUsageDescription</key>
 	<string>Jot adds a reminder when a note asks to be reminded at a time.</string>
 	<key>NSServices</key>
@@ -48,5 +50,7 @@
 			</array>
 		</dict>
 	</array>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Jot turns your dictation into text on your Mac.</string>
 </dict>
 </plist>

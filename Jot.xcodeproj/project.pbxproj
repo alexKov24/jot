@@ -28,6 +28,7 @@
 		B8D422B47963707C50466D30 /* Brand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9B4885C2CC53344EDBA2C2 /* Brand.swift */; };
 		BA9235C08CEF43D24FF8597B /* AppleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F225EE3FE50010884114EEE /* AppleModel.swift */; };
 		C1253963480980F0FA9F1AEC /* JotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A3B7E94AEA3929C18DDCC4 /* JotApp.swift */; };
+		D6B82AD9FF39E3B96B52EBFF /* Dictation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A8732C303B433122F2064F /* Dictation.swift */; };
 		DF53652D50074D171EE8AFFF /* JotWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB3E61545DDF8ADA12F518DB /* JotWidget.swift */; };
 		E627399561B1AC9DAB0B0408 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 991B7DE0DA849EA5EC2333F5 /* KeyboardShortcuts */; };
 		F171991BFADD981ABBAE4508 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601547FC89D704EC0DD1F44 /* AppGroup.swift */; };
@@ -63,6 +64,7 @@
 		0A7B5830E1FD454BCDE4FA42 /* CLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLI.swift; sourceTree = "<group>"; };
 		1B922D167CB9DA6B95130E0F /* OllamaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OllamaClient.swift; sourceTree = "<group>"; };
 		1F9DF3DE7183A5910C388808 /* FloatingPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanel.swift; sourceTree = "<group>"; };
+		21A8732C303B433122F2064F /* Dictation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dictation.swift; sourceTree = "<group>"; };
 		256BEE884B390615B1B1F38B /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		39D78D10CBAC973656D6A49C /* FolderAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderAccess.swift; sourceTree = "<group>"; };
 		40A3B7E94AEA3929C18DDCC4 /* JotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JotApp.swift; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				B34C90C2F84D1E558280151F /* CaptureView.swift */,
+				21A8732C303B433122F2064F /* Dictation.swift */,
 				1F9DF3DE7183A5910C388808 /* FloatingPanel.swift */,
 				AECF491D23638DA6590DDECC /* IdeasView.swift */,
 				1A2BE0F8C7841B042F1C55D4 /* Settings */,
@@ -320,6 +323,7 @@
 				B8D422B47963707C50466D30 /* Brand.swift in Sources */,
 				658912EDF8158ECDCBD8574A /* CLI.swift in Sources */,
 				24750449133E42338E0B35A8 /* CaptureView.swift in Sources */,
+				D6B82AD9FF39E3B96B52EBFF /* Dictation.swift in Sources */,
 				2545455EE1FCD461700B5A59 /* FloatingPanel.swift in Sources */,
 				74CA74BAEC354EC88CA95D98 /* FolderAccess.swift in Sources */,
 				A20E83F750E44158353D44FA /* IdeaStore.swift in Sources */,

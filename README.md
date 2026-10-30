@@ -35,6 +35,7 @@ into a checklist, a reminder or a plan that stays on your Mac.
 ## What it does
 
 - **Captures your thought.** **⌃⌥J** opens a field for your jot over any app.
+- **Takes dictation.** Click the mic or press **⌘D** in that field and speak; Apple's on-device speech-to-text types it in.
 - **Creates a plan.** Your favorite model adds a clean title and steps to your jot.
 - **Saves text from any app.** Select text, right-click, **Copy to Jot**. It's a macOS Service,
   so it may sit under **Services ›** in the menu (hide unused ones in **System Settings › Keyboard ›
@@ -164,7 +165,7 @@ docs/RFC.md   Design notes
 - [ ] Signed, notarized releases
 - [x] Soft delete: deleted jots stay for 30 days, then go for good
 - [x] Soft delete a jot once all its steps are done
-- [ ] Speech-to-text provider
+- [x] Speech-to-text in the capture panel
 - [x] Edit the prompt
 - [ ] Cleaner settings
 
