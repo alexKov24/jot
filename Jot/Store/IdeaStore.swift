@@ -89,7 +89,9 @@ final class IdeaStore {
                 update(id) {
                     $0.title = result.title
                     $0.items = result.items.map { ChecklistItem(text: $0) }
-                    $0.remindAt = AI.remindDate(result.remindAt)
+                    let remind = AI.remindDate(result.remindAt)
+                    $0.remindAt = remind?.date
+                    $0.remindAllDay = remind?.allDay
                     $0.status = .ready
                 }
             } catch {

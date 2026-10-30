@@ -17,6 +17,8 @@ struct Idea: Codable, Identifiable, Hashable, Sendable {
     var error: String?
     var createdAt = Date()
     var remindAt: Date?
+    /// The reminder is for the day of `remindAt`, with no time.
+    var remindAllDay: Bool?
     /// Apple Reminders calendar item identifier.
     var reminderID: String?
 

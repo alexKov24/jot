@@ -101,25 +101,34 @@ enum AIError: LocalizedError {
 enum AI {
     static var instructions: String {
         let now = Date.now.formatted(.dateTime.weekday(.wide).year().month().day().hour().minute())
+        // Spelled out so small models don't have to do weekday arithmetic.
+        let format = DateFormatter()
+        format.locale = Locale(identifier: "en_US_POSIX")
+        format.dateFormat = "EEEE yyyy-MM-dd"
+        let week = (1...7).map { format.string(from: Calendar.current.date(byAdding: .day, value: $0, to: .now)!) }
+            .joined(separator: ", ")
         return """
         You turn a quick, rough note into a short title (at most 8 words) and a checklist.
         If the note lists things, such as groceries to buy or things to pack, the items are exactly \
         those things, one per item (for example "Buy milk"), and nothing else.
         Otherwise give 3 to 8 concrete actions that start with a verb and are specific to the note, \
         using the tools, versions and comparisons it mentions. No fluff, no numbering.
-        If the note asks to be reminded at a time, set remindAt to that local time as "yyyy-MM-dd HH:mm" \
+        If the note gives a time frame (for example "tomorrow", "on friday", "at 16:00", "remind me at 9"), \
+        set remindAt to that local time as "yyyy-MM-dd HH:mm", or as "yyyy-MM-dd" when it names a day but no time \
         (a time already past today means tomorrow). Otherwise set remindAt to "".
-        It is now \(now).
+        It is now \(now). The next 7 days are: \(week).
         """
     }
 
-    /// Parses `Expansion.remindAt`; nil when empty, malformed or in the past.
-    static func remindDate(_ text: String) -> Date? {
+    /// Parses `Expansion.remindAt` ("yyyy-MM-dd HH:mm", or "yyyy-MM-dd" for a whole day); nil when empty, malformed or past.
+    static func remindDate(_ text: String) -> (date: Date, allDay: Bool)? {
         let format = DateFormatter()
-        format.dateFormat = "yyyy-MM-dd HH:mm"
         format.locale = Locale(identifier: "en_US_POSIX")
-        guard let date = format.date(from: text), date > .now else { return nil }
-        return date
+        format.dateFormat = "yyyy-MM-dd HH:mm"
+        if let date = format.date(from: text) { return date > .now ? (date, false) : nil }
+        format.dateFormat = "yyyy-MM-dd"
+        if let day = format.date(from: text) { return day >= Calendar.current.startOfDay(for: .now) ? (day, true) : nil }
+        return nil
     }
 
     static func schema() -> [String: Any] {
