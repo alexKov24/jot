@@ -8,7 +8,7 @@ struct OllamaClient {
         base = (URL(string: url) ?? URL(string: "http://localhost:11434")!).appending(path: "v1/")
     }
 
-    func expand(_ note: String, model: String) async throws -> Expansion {
+    func expand(_ note: String, model: String, prompt: String) async throws -> Expansion {
         struct Response: Decodable {
             struct Choice: Decodable { struct Message: Decodable { let content: String?; let refusal: String? }; let message: Message }
             let choices: [Choice]
@@ -17,7 +17,7 @@ struct OllamaClient {
         let body: [String: Any] = [
             "model": model,
             "messages": [
-                ["role": "system", "content": AI.instructions],
+                ["role": "system", "content": prompt],
                 ["role": "user", "content": note],
             ],
             "response_format": [

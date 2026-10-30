@@ -40,6 +40,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         store.start()
         NSApp.servicesProvider = self
         NSUpdateDynamicServices()
+        Updates.shared.start()
         KeyboardShortcuts.onKeyUp(for: .capture) { [unowned self] in capture.toggle() }
         KeyboardShortcuts.onKeyUp(for: .list) { [unowned self] in list.toggle() }
         if store.folder == nil, !UserDefaults.standard.bool(forKey: "askedForFolder") {
@@ -63,6 +64,10 @@ struct MenuContent: View {
     @Environment(\.openSettings) private var openSettings
 
     var body: some View {
+        if let release = Updates.shared.available {
+            Button("Update Available (v\(release.version))…") { NSWorkspace.shared.open(release.url) }
+            Divider()
+        }
         Button("New Idea") { app.showCapture() }
         Button("Show Ideas") { app.showList() }
         Divider()
@@ -71,6 +76,7 @@ struct MenuContent: View {
             openSettings()
         }
         .keyboardShortcut(",")
+        Button("Check for Updates…") { Task { await Updates.shared.checkNow() } }
         Divider()
         Button("Quit Jot") { NSApp.terminate(nil) }
             .keyboardShortcut("q")

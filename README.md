@@ -35,17 +35,21 @@ into a checklist, a reminder or a plan that stays on your Mac.
 ## What it does
 
 - **Captures your thought.** **⌃⌥J** opens a field for your jot over any app.
+- **Takes dictation.** Click the mic or press **⌘D** in that field and speak; Apple's on-device speech-to-text types it in.
 - **Creates a plan.** Your favorite model adds a clean title and steps to your jot.
 - **Saves text from any app.** Select text, right-click, **Copy to Jot**. It's a macOS Service,
   so it may sit under **Services ›** in the menu (hide unused ones in **System Settings › Keyboard ›
   Keyboard Shortcuts › Services**).
 - **One press away.** **⌃⌥L** opens the full list; drag cards to reorder. Both shortcuts can be rebound.
 - **Lives on your desktop.** A widget (medium and large) shows your lists and ticks items with a click.
+- **Clears itself.** Tick the last step and the jot moves to Recently Deleted, where it stays for 30 days.
 - **Sets reminders from plain words.** Give a jot a time frame ("call alex at 16:00", "pay rent friday")
   and Jot adds it to Apple Reminders, which alerts on your Mac and iPhone. A day without a time
   becomes an all-day reminder.
 - **Uses the model you already have.** Apple On-Device (no install needed!), Claude Code, Codex,
   Gemini CLI or Ollama, switchable in **Settings › Models**. No API keys.
+- **Lets you edit the prompt.** Tell the model how to write titles and steps in **Settings › Models**;
+  the reply format and reminder times stay fixed, and Reset to Default brings back the original.
 - **Keeps your data in a plain file.** Jots are saved as `jot.json` in a folder you choose.
 - **Stays out of the way.** Menu bar only, no Dock icon, optional launch at login.
 
@@ -130,6 +134,13 @@ Jot targets macOS 26. Apple On-Device needs Apple silicon; the CLI providers and
 **Can I edit the checklist by hand?**
 Yes.
 
+**Can I get a deleted jot back?**
+Yes, for 30 days, including jots that left on their own when you ticked the last step. The trash
+button in the list shows Recently Deleted, with Restore and Delete Now.
+
+**How do I update Jot?**
+On launch and once a day Jot checks GitHub for a newer release. If there is one, the menu bar menu shows **Update Available**, which opens the release page. **Check for Updates…** checks right away. Nothing downloads or installs on its own.
+
 ## Project layout
 
 ```text
@@ -150,11 +161,12 @@ docs/RFC.md   Design notes
 - [x] Search
 - [x] Markdown support and export
 - [x] Copy to Jot: save selected text from any app via right-click
-- [ ] Signed, notarized releases with auto-update (Sparkle)
-- [ ] Soft delete: deleted jots stay for 30 days, then go for good
-- [ ] Soft delete a jot once all its steps are done
-- [ ] Speech-to-text provider
-- [ ] Edit the prompt
+- [x] Update check against GitHub releases
+- [ ] Signed, notarized releases
+- [x] Soft delete: deleted jots stay for 30 days, then go for good
+- [x] Soft delete a jot once all its steps are done
+- [x] Speech-to-text in the capture panel
+- [x] Edit the prompt
 - [ ] Cleaner settings
 
 ## License

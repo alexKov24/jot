@@ -37,6 +37,20 @@ struct ModelSettings: View {
                 }
                 .font(.caption).foregroundStyle(.secondary)
             }
+            Section {
+                TextEditor(text: $settings.prompt)
+                    .frame(minHeight: 120)
+            } header: {
+                Text("Prompt")
+            } footer: {
+                HStack {
+                    Text("How the model writes titles and steps. The reply format and reminder times stay fixed.")
+                    Spacer()
+                    Button("Reset to Default") { settings.prompt = AI.defaultStyle }
+                        .disabled(settings.prompt == AI.defaultStyle)
+                }
+                .font(.caption).foregroundStyle(.secondary)
+            }
         }
         .formStyle(.grouped)
         .task { await settings.check() }

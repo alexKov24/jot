@@ -5,9 +5,15 @@ import notify
 
 @MainActor @Observable
 final class IdeaStore {
-    private(set) var ideas: [Idea] = []
+    /// Every jot, including deleted ones still in the 30-day window.
+    private(set) var all: [Idea] = []
     private(set) var folder: URL?
     private(set) var lastError: String?
+
+    var ideas: [Idea] { all.filter { $0.deletedAt == nil } }
+    var deleted: [Idea] { all.filter { $0.deletedAt != nil } }
+
+    static let keepDeleted: TimeInterval = 30 * 24 * 3600
 
     @ObservationIgnored private var notifyToken: Int32 = 0
     /// Set when jot.json exists but can't be parsed, so we never overwrite it.
@@ -24,6 +30,13 @@ final class IdeaStore {
         applyWidgetToggles()
         // Finish anything interrupted by a quit mid-expansion.
         for idea in ideas where idea.status == .expanding { expand(idea.id) }
+        // Jot can run for weeks; purge expired jots daily, not only on launch.
+        Task { [weak self] in
+            while true {
+                try? await Task.sleep(for: .seconds(24 * 3600))
+                self?.purge()
+            }
+        }
     }
 
     // MARK: Actions
@@ -32,7 +45,7 @@ final class IdeaStore {
         let note = note.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !note.isEmpty else { return }
         let idea = Idea(note: note, title: note)
-        ideas.insert(idea, at: 0)
+        all.insert(idea, at: 0)
         save()
         expand(idea.id)
     }
@@ -42,10 +55,12 @@ final class IdeaStore {
         expand(id)
     }
 
+    /// Ticking the last open step moves the jot to Recently Deleted (its reminder stays).
     func toggle(_ itemID: UUID) {
-        for i in ideas.indices {
-            if let j = ideas[i].items.firstIndex(where: { $0.id == itemID }) {
-                ideas[i].items[j].done.toggle()
+        for i in all.indices {
+            if let j = all[i].items.firstIndex(where: { $0.id == itemID }) {
+                all[i].items[j].done.toggle()
+                if all[i].items[j].done, all[i].openItems.isEmpty { all[i].deletedAt = .now }
             }
         }
         save()
@@ -54,18 +69,28 @@ final class IdeaStore {
     /// Puts `id` where `target` is now.
     func move(_ id: UUID, to target: UUID) {
         guard id != target,
-              let from = ideas.firstIndex(where: { $0.id == id }),
-              let to = ideas.firstIndex(where: { $0.id == target })
+              let from = all.firstIndex(where: { $0.id == id }),
+              let to = all.firstIndex(where: { $0.id == target })
         else { return }
-        ideas.move(fromOffsets: [from], toOffset: to > from ? to + 1 : to)
+        all.move(fromOffsets: [from], toOffset: to > from ? to + 1 : to)
         save()
     }
 
+    /// Moves the jot to Recently Deleted.
     func delete(_ id: UUID, reminder: Bool = false) {
-        if reminder, let reminderID = ideas.first(where: { $0.id == id })?.reminderID {
+        if reminder, let reminderID = all.first(where: { $0.id == id })?.reminderID {
             do { try Reminders.delete(reminderID) } catch { lastError = error.localizedDescription }
         }
-        ideas.removeAll { $0.id == id }
+        update(id) { $0.deletedAt = .now }
+    }
+
+    func restore(_ id: UUID) {
+        update(id) { $0.deletedAt = nil }
+    }
+
+    /// Removes the jot for good.
+    func deleteNow(_ id: UUID) {
+        all.removeAll { $0.id == id }
         save()
     }
 
@@ -91,7 +116,7 @@ final class IdeaStore {
     // MARK: AI
 
     private func expand(_ id: UUID) {
-        guard let note = ideas.first(where: { $0.id == id })?.note else { return }
+        guard let note = all.first(where: { $0.id == id })?.note else { return }
         let request = AppSettings.shared.request()
         Task {
             do {
@@ -112,7 +137,7 @@ final class IdeaStore {
                 return
             }
             // The checklist is fine even if Reminders fails; show the error with Retry.
-            guard let idea = ideas.first(where: { $0.id == id }), let date = idea.remindAt else { return }
+            guard let idea = all.first(where: { $0.id == id }), let date = idea.remindAt else { return }
             do {
                 let reminderID = try await Reminders.save(idea, at: date)
                 update(id) { $0.reminderID = reminderID }
@@ -125,8 +150,8 @@ final class IdeaStore {
     // MARK: Persistence
 
     private func update(_ id: UUID, _ change: (inout Idea) -> Void) {
-        guard let i = ideas.firstIndex(where: { $0.id == id }) else { return }
-        change(&ideas[i])
+        guard let i = all.firstIndex(where: { $0.id == id }) else { return }
+        change(&all[i])
         save()
     }
 
@@ -138,20 +163,29 @@ final class IdeaStore {
 
     private func load() {
         loadFailed = false
-        guard let data = try? Data(contentsOf: fileURL) else { ideas = []; return }
+        guard let data = try? Data(contentsOf: fileURL) else { all = []; return }
         do {
-            ideas = try JSONDecoder.jot.decode([Idea].self, from: data)
+            all = try JSONDecoder.jot.decode([Idea].self, from: data)
             lastError = nil
+            purge()
         } catch {
             loadFailed = true
             lastError = "Couldn't read \(fileURL.lastPathComponent): \(error.localizedDescription)"
         }
     }
 
+    /// Deleted more than 30 days ago: gone for good.
+    private func purge() {
+        let cutoff = Date.now.addingTimeInterval(-Self.keepDeleted)
+        let count = all.count
+        all.removeAll { ($0.deletedAt ?? .now) <= cutoff }
+        if all.count < count { save() }
+    }
+
     private func save() {
         guard !loadFailed else { return }
         do {
-            try JSONEncoder.jot.encode(ideas).write(to: fileURL, options: .atomic)
+            try JSONEncoder.jot.encode(all).write(to: fileURL, options: .atomic)
             lastError = nil
         } catch {
             lastError = "Couldn't save: \(error.localizedDescription)"
