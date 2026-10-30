@@ -9,7 +9,8 @@ enum AppleModel {
         var title: String
         @Guide(description: "3 to 8 concrete actions, each starting with a verb, or the note's own list")
         var items: [String]
-        @Guide(description: "Requested reminder time as yyyy-MM-dd HH:mm, or empty")
+        // The on-device model writes dates its own way (e.g. 29-10-2026) unless the format is enforced.
+        @Guide(description: "Reminder time as yyyy-MM-dd HH:mm, the day as yyyy-MM-dd, or empty", .pattern(/(\d{4}-\d{2}-\d{2}( \d{2}:\d{2})?)?/))
         var remindAt: String
     }
 
