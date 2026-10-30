@@ -128,7 +128,7 @@ private struct IdeaCard: View {
                 Text(highlight(idea.title, query)).font(.headline)
                 Spacer()
                 if let date = idea.remindAt {
-                    Label(date.formatted(Calendar.current.isDateInToday(date) ? .dateTime.hour().minute() : .dateTime.weekday().hour().minute()), systemImage: "bell.fill")
+                    Label(remindLabel(date, allDay: idea.remindAllDay == true), systemImage: "bell.fill")
                         .font(.caption.monospacedDigit())
                         .foregroundStyle(Color.amber)
                 }
@@ -187,6 +187,12 @@ private struct IdeaCard: View {
                 .font(.caption.monospacedDigit())
                 .foregroundStyle(idea.openItems.isEmpty ? AnyShapeStyle(Color.amber) : AnyShapeStyle(.secondary))
         }
+    }
+
+    private func remindLabel(_ date: Date, allDay: Bool) -> String {
+        let today = Calendar.current.isDateInToday(date)
+        if allDay { return today ? "Today" : date.formatted(.dateTime.weekday()) }
+        return date.formatted(today ? .dateTime.hour().minute() : .dateTime.weekday().hour().minute())
     }
 
     private func copy() {

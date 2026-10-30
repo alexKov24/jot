@@ -38,8 +38,9 @@ into a checklist, a reminder or a plan that stays on your Mac.
 - **Creates a plan.** Your favorite model adds a clean title and steps to your jot.
 - **One press away.** **⌃⌥L** opens the full list. Both shortcuts can be rebound.
 - **Lives on your desktop.** A widget (medium and large) shows your lists and ticks items with a click.
-- **Sets reminders from plain words.** End a jot with "remind me at 16:00" and Jot adds it
-  to Apple Reminders, which alerts on your Mac and iPhone.
+- **Sets reminders from plain words.** Give a jot a time frame ("call alex at 16:00", "pay rent friday")
+  and Jot adds it to Apple Reminders, which alerts on your Mac and iPhone. A day without a time
+  becomes an all-day reminder.
 - **Uses the model you already have.** Apple On-Device (no install needed!), Claude Code, Codex,
   Gemini CLI or Ollama, switchable in **Settings › Models**. No API keys.
 - **Keeps your data in a plain file.** Jots are saved as `jot.json` in a folder you choose.
@@ -53,7 +54,7 @@ into a checklist, a reminder or a plan that stays on your Mac.
 </p>
 
 1. **Capture**: the jot is written to `jot.json` the moment you press ↩.
-2. **Expand**: the model you picked returns a title, the steps and, if you asked, a reminder time.
+2. **Expand**: the model you picked returns a title, the steps and, if the jot has a time frame, a reminder time.
 3. **Act**: tick items in the list or the widget; the widget reads a snapshot through an App Group.
 
 Cloud models run through the command-line tools you already use, signed in as you:

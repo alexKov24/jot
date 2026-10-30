@@ -44,8 +44,14 @@ enum Reminders {
         }
         reminder.title = idea.title
         reminder.notes = idea.items.map { "• \($0.text)" }.joined(separator: "\n")
-        reminder.dueDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date)
-        reminder.alarms = [EKAlarm(absoluteDate: date)]
+        if idea.remindAllDay == true {
+            // Day only: shows as all-day; Reminders alerts at its all-day notification time.
+            reminder.dueDateComponents = Calendar.current.dateComponents([.year, .month, .day], from: date)
+            reminder.alarms = nil
+        } else {
+            reminder.dueDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+            reminder.alarms = [EKAlarm(absoluteDate: date)]
+        }
         try store.save(reminder, commit: true)
         return reminder.calendarItemIdentifier
     }
