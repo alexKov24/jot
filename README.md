@@ -41,6 +41,7 @@ into a checklist, a reminder or a plan that stays on your Mac.
   Keyboard Shortcuts › Services**).
 - **One press away.** **⌃⌥L** opens the full list; drag cards to reorder. Both shortcuts can be rebound.
 - **Lives on your desktop.** A widget (medium and large) shows your lists and ticks items with a click.
+- **Clears itself.** Tick the last step and the jot moves to Recently Deleted, where it stays for 30 days.
 - **Sets reminders from plain words.** Give a jot a time frame ("call alex at 16:00", "pay rent friday")
   and Jot adds it to Apple Reminders, which alerts on your Mac and iPhone. A day without a time
   becomes an all-day reminder.
@@ -131,7 +132,8 @@ Jot targets macOS 26. Apple On-Device needs Apple silicon; the CLI providers and
 Yes.
 
 **Can I get a deleted jot back?**
-Yes, for 30 days. The trash button in the list shows Recently Deleted, with Restore and Delete Now.
+Yes, for 30 days, including jots that left on their own when you ticked the last step. The trash
+button in the list shows Recently Deleted, with Restore and Delete Now.
 
 ## Project layout
 
@@ -155,7 +157,7 @@ docs/RFC.md   Design notes
 - [x] Copy to Jot: save selected text from any app via right-click
 - [ ] Signed, notarized releases with auto-update (Sparkle)
 - [x] Soft delete: deleted jots stay for 30 days, then go for good
-- [ ] Soft delete a jot once all its steps are done
+- [x] Soft delete a jot once all its steps are done
 - [ ] Speech-to-text provider
 - [ ] Edit the prompt
 - [ ] Cleaner settings

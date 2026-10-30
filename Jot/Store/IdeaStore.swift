@@ -55,10 +55,12 @@ final class IdeaStore {
         expand(id)
     }
 
+    /// Ticking the last open step moves the jot to Recently Deleted (its reminder stays).
     func toggle(_ itemID: UUID) {
         for i in all.indices {
             if let j = all[i].items.firstIndex(where: { $0.id == itemID }) {
                 all[i].items[j].done.toggle()
+                if all[i].items[j].done, all[i].openItems.isEmpty { all[i].deletedAt = .now }
             }
         }
         save()
