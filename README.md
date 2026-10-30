@@ -36,6 +36,9 @@ into a checklist, a reminder or a plan that stays on your Mac.
 
 - **Captures your thought.** **⌃⌥J** opens a field for your jot over any app.
 - **Creates a plan.** Your favorite model adds a clean title and steps to your jot.
+- **Saves text from any app.** Select text, right-click, **Copy to Jot**. It's a macOS Service,
+  so it may sit under **Services ›** in the menu (hide unused ones in **System Settings › Keyboard ›
+  Keyboard Shortcuts › Services**).
 - **One press away.** **⌃⌥L** opens the full list; drag cards to reorder. Both shortcuts can be rebound.
 - **Lives on your desktop.** A widget (medium and large) shows your lists and ticks items with a click.
 - **Sets reminders from plain words.** Give a jot a time frame ("call alex at 16:00", "pay rent friday")
@@ -146,6 +149,7 @@ docs/RFC.md   Design notes
 - [x] Edit checklist items by hand
 - [x] Search
 - [x] Markdown support and export
+- [x] Copy to Jot: save selected text from any app via right-click
 - [ ] Signed, notarized releases with auto-update (Sparkle)
 - [ ] Soft delete: deleted jots stay for 30 days, then go for good
 - [ ] Soft delete a jot once all its steps are done
