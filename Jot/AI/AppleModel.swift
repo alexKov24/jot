@@ -25,9 +25,9 @@ enum AppleModel {
         }
     }
 
-    static func expand(_ note: String) async throws -> Expansion {
+    static func expand(_ note: String, prompt: String) async throws -> Expansion {
         if let reason = unavailableReason { throw AIError.unavailable(reason) }
-        let session = LanguageModelSession(instructions: AI.instructions)
+        let session = LanguageModelSession(instructions: prompt)
         let plan = try await session.respond(to: note, generating: Plan.self).content
         return Expansion(title: plan.title, items: plan.items, remindAt: plan.remindAt)
     }

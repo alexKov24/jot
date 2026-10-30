@@ -21,6 +21,12 @@ final class AppSettings {
     var ollamaURL: String {
         didSet { defaults.set(ollamaURL, forKey: "ollamaURL") }
     }
+    /// Editable part of the AI prompt. Saved only when it differs from `AI.defaultStyle`.
+    var prompt: String {
+        didSet {
+            if prompt == AI.defaultStyle { defaults.removeObject(forKey: "prompt") } else { defaults.set(prompt, forKey: "prompt") }
+        }
+    }
     /// Why each provider can't run right now; missing means ready. Filled by `check()`.
     private(set) var problems: [Provider: String] = [:]
     private(set) var checking = false
@@ -30,6 +36,7 @@ final class AppSettings {
         chosenModels = defaults.dictionary(forKey: "models.chosen") as? [String: String] ?? [:]
         modelLists = defaults.dictionary(forKey: "models.lists") as? [String: [String]] ?? [:]
         ollamaURL = defaults.string(forKey: "ollamaURL") ?? "http://localhost:11434"
+        prompt = defaults.string(forKey: "prompt") ?? AI.defaultStyle
         Task { await check() }
     }
 
@@ -55,7 +62,7 @@ final class AppSettings {
     }
 
     func request() -> AIRequest {
-        AIRequest(provider: provider, model: model(for: provider), ollamaURL: ollamaURL)
+        AIRequest(provider: provider, model: model(for: provider), ollamaURL: ollamaURL, style: prompt)
     }
 
     /// Short label of the active model for the capture panel.

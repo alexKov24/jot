@@ -76,6 +76,8 @@ struct AIRequest: Sendable {
     let provider: Provider
     let model: String
     let ollamaURL: String
+    /// The editable part of the prompt; empty means `AI.defaultStyle`.
+    let style: String
 }
 
 enum AIError: LocalizedError {
@@ -99,7 +101,18 @@ enum AIError: LocalizedError {
 }
 
 enum AI {
-    static var instructions: String {
+    /// The part of the prompt the user can edit in Settings › Models.
+    static let defaultStyle = """
+        You turn a quick, rough note into a short title (at most 8 words) and a checklist.
+        If the note lists things, such as groceries to buy or things to pack, the items are exactly \
+        those things, one per item (for example "Buy milk"), and nothing else.
+        Otherwise give 3 to 8 concrete actions that start with a verb and are specific to the note, \
+        using the tools, versions and comparisons it mentions. No fluff, no numbering.
+        """
+
+    /// The user's style, then the fixed reminder format that `remindDate` parses.
+    static func instructions(style: String) -> String {
+        let style = style.trimmingCharacters(in: .whitespacesAndNewlines)
         let now = Date.now.formatted(.dateTime.weekday(.wide).year().month().day().hour().minute())
         // Spelled out so small models don't have to do weekday arithmetic.
         let format = DateFormatter()
@@ -108,11 +121,7 @@ enum AI {
         let week = (1...7).map { format.string(from: Calendar.current.date(byAdding: .day, value: $0, to: .now)!) }
             .joined(separator: ", ")
         return """
-        You turn a quick, rough note into a short title (at most 8 words) and a checklist.
-        If the note lists things, such as groceries to buy or things to pack, the items are exactly \
-        those things, one per item (for example "Buy milk"), and nothing else.
-        Otherwise give 3 to 8 concrete actions that start with a verb and are specific to the note, \
-        using the tools, versions and comparisons it mentions. No fluff, no numbering.
+        \(style.isEmpty ? defaultStyle : style)
         If the note gives a time frame (for example "tomorrow", "on friday", "at 16:00", "remind me at 9"), \
         set remindAt to that local time as "yyyy-MM-dd HH:mm", or as "yyyy-MM-dd" when it names a day but no time \
         (a time already past today means tomorrow). Otherwise set remindAt to "".
@@ -157,14 +166,15 @@ enum AI {
 
     static func expand(_ note: String, with r: AIRequest) async throws -> Expansion {
         let result: Expansion
+        let prompt = instructions(style: r.style)
         switch r.provider {
-        case .apple: result = try await AppleModel.expand(note)
-        case .claude: result = try await ClaudeCLI.expand(note, model: r.model)
-        case .codex: result = try await CodexCLI.expand(note, model: r.model)
-        case .gemini: result = try await GeminiCLI.expand(note, model: r.model)
+        case .apple: result = try await AppleModel.expand(note, prompt: prompt)
+        case .claude: result = try await ClaudeCLI.expand(note, model: r.model, prompt: prompt)
+        case .codex: result = try await CodexCLI.expand(note, model: r.model, prompt: prompt)
+        case .gemini: result = try await GeminiCLI.expand(note, model: r.model, prompt: prompt)
         case .ollama:
             guard !r.model.isEmpty else { throw AIError.noModel }
-            result = try await OllamaClient(url: r.ollamaURL).expand(note, model: r.model)
+            result = try await OllamaClient(url: r.ollamaURL).expand(note, model: r.model, prompt: prompt)
         }
         guard !result.items.isEmpty else { throw AIError.empty }
         return result

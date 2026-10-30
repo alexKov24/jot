@@ -76,13 +76,13 @@ enum CLI {
 
 /// `claude -p` with structured output.
 enum ClaudeCLI {
-    static func expand(_ note: String, model: String) async throws -> Expansion {
+    static func expand(_ note: String, model: String, prompt: String) async throws -> Expansion {
         struct Response: Decodable { let is_error: Bool?; let result: String?; let structured_output: Expansion? }
         var args = [
             "-p", note,
             "--output-format", "json",
             "--json-schema", try AI.schemaJSON(),
-            "--system-prompt", AI.instructions,
+            "--system-prompt", prompt,
             "--tools", "",
             "--effort", "low",
             "--no-session-persistence",
@@ -99,13 +99,13 @@ enum ClaudeCLI {
 
 /// `codex exec` with an output schema. Its last message goes to stdout.
 enum CodexCLI {
-    static func expand(_ note: String, model: String) async throws -> Expansion {
+    static func expand(_ note: String, model: String, prompt: String) async throws -> Expansion {
         let schema = FileManager.default.temporaryDirectory.appending(path: "jot-schema-\(UUID().uuidString).json")
         try Data(try AI.schemaJSON().utf8).write(to: schema)
         defer { try? FileManager.default.removeItem(at: schema) }
         var args = ["exec", "--ephemeral", "--skip-git-repo-check", "-s", "read-only", "-c", "web_search=\"disabled\"", "--output-schema", schema.path]
         if !model.isEmpty { args += ["-m", model] }
-        args.append("\(AI.instructions)\n\nNote:\n\(note)")
+        args.append("\(prompt)\n\nNote:\n\(note)")
         return try AI.decode(try await CLI.run("codex", args))
     }
 
@@ -114,11 +114,11 @@ enum CodexCLI {
 
 /// `gemini -p` with JSON output. No schema flag, so the prompt asks for JSON.
 enum GeminiCLI {
-    static func expand(_ note: String, model: String) async throws -> Expansion {
+    static func expand(_ note: String, model: String, prompt: String) async throws -> Expansion {
         struct Response: Decodable { let response: String }
         var args = ["--output-format", "json"]
         if !model.isEmpty { args += ["-m", model] }
-        args += ["-p", "\(AI.instructions)\nReply with only JSON matching this schema: \(try AI.schemaJSON())\n\nNote:\n\(note)"]
+        args += ["-p", "\(prompt)\nReply with only JSON matching this schema: \(try AI.schemaJSON())\n\nNote:\n\(note)"]
         let response = try JSONDecoder().decode(Response.self, from: try await CLI.run("gemini", args))
         return try AI.decode(Data(response.response.utf8))
     }

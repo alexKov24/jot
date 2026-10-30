@@ -47,6 +47,8 @@ into a checklist, a reminder or a plan that stays on your Mac.
   becomes an all-day reminder.
 - **Uses the model you already have.** Apple On-Device (no install needed!), Claude Code, Codex,
   Gemini CLI or Ollama, switchable in **Settings › Models**. No API keys.
+- **Lets you edit the prompt.** Tell the model how to write titles and steps in **Settings › Models**;
+  the reply format and reminder times stay fixed, and Reset to Default brings back the original.
 - **Keeps your data in a plain file.** Jots are saved as `jot.json` in a folder you choose.
 - **Stays out of the way.** Menu bar only, no Dock icon, optional launch at login.
 
@@ -159,7 +161,7 @@ docs/RFC.md   Design notes
 - [x] Soft delete: deleted jots stay for 30 days, then go for good
 - [x] Soft delete a jot once all its steps are done
 - [ ] Speech-to-text provider
-- [ ] Edit the prompt
+- [x] Edit the prompt
 - [ ] Cleaner settings
 
 ## License
