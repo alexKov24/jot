@@ -130,6 +130,9 @@ Jot targets macOS 26. Apple On-Device needs Apple silicon; the CLI providers and
 **Can I edit the checklist by hand?**
 Yes.
 
+**Can I get a deleted jot back?**
+Yes, for 30 days. The trash button in the list shows Recently Deleted, with Restore and Delete Now.
+
 ## Project layout
 
 ```text
@@ -151,7 +154,7 @@ docs/RFC.md   Design notes
 - [x] Markdown support and export
 - [x] Copy to Jot: save selected text from any app via right-click
 - [ ] Signed, notarized releases with auto-update (Sparkle)
-- [ ] Soft delete: deleted jots stay for 30 days, then go for good
+- [x] Soft delete: deleted jots stay for 30 days, then go for good
 - [ ] Soft delete a jot once all its steps are done
 - [ ] Speech-to-text provider
 - [ ] Edit the prompt

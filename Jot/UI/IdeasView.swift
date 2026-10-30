@@ -7,11 +7,13 @@ struct IdeasView: View {
     @State private var dragging: UUID?
     @State private var searching = false
     @State private var query = ""
+    @State private var showDeleted = false
     @FocusState private var searchFocused: Bool
 
     private var shown: [Idea] {
-        guard !query.isEmpty else { return store.ideas }
-        return store.ideas.filter { idea in
+        let ideas = showDeleted ? store.deleted : store.ideas
+        guard !query.isEmpty else { return ideas }
+        return ideas.filter { idea in
             ([idea.title, idea.note] + idea.items.map(\.text)).contains { $0.localizedStandardContains(query) }
         }
     }
@@ -27,6 +29,9 @@ struct IdeasView: View {
                         .onExitCommand(perform: closeSearch)
                 } else {
                     PixelText("my jots")
+                    if showDeleted {
+                        Text("Recently Deleted").font(.callout).foregroundStyle(.secondary)
+                    }
                     Spacer()
                 }
                 Text("\(shown.count)")
@@ -36,6 +41,8 @@ struct IdeasView: View {
                     searching ? closeSearch() : openSearch()
                 }
                 .keyboardShortcut("f")
+                HeaderButton(symbol: showDeleted ? "trash.fill" : "trash") { showDeleted.toggle() }
+                    .help(showDeleted ? "Back to jots" : "Recently Deleted")
             }
             .animation(.snappy(duration: 0.2), value: searching)
             .padding(.horizontal, 20)
@@ -52,7 +59,11 @@ struct IdeasView: View {
                     .padding(.bottom, 8)
             }
 
-            if store.ideas.isEmpty {
+            if showDeleted && store.deleted.isEmpty {
+                ContentUnavailableView("Nothing deleted", systemImage: "trash",
+                                       description: Text("Deleted jots stay here for 30 days."))
+                    .frame(maxHeight: .infinity)
+            } else if !showDeleted && store.ideas.isEmpty {
                 ContentUnavailableView {
                     Label { Text("No ideas yet") } icon: { PixelJ(cell: 4) }
                 } description: {
@@ -65,13 +76,17 @@ struct IdeasView: View {
             } else {
                 ScrollView {
                     LazyVStack(spacing: 10) {
-                        ForEach(shown) { idea in
-                            IdeaCard(idea: idea, query: query)
-                                .onDrag {
-                                    dragging = idea.id
-                                    return NSItemProvider(object: idea.title as NSString)
-                                }
-                                .onDrop(of: [.text], delegate: CardDrop(target: idea.id, dragging: $dragging, store: store))
+                        if showDeleted {
+                            ForEach(shown) { DeletedCard(idea: $0, query: query) }
+                        } else {
+                            ForEach(shown) { idea in
+                                IdeaCard(idea: idea, query: query)
+                                    .onDrag {
+                                        dragging = idea.id
+                                        return NSItemProvider(object: idea.title as NSString)
+                                    }
+                                    .onDrop(of: [.text], delegate: CardDrop(target: idea.id, dragging: $dragging, store: store))
+                            }
                         }
                     }
                     .padding(.horizontal, 14)
@@ -92,6 +107,35 @@ struct IdeasView: View {
     private func closeSearch() {
         query = ""
         searching = false
+    }
+}
+
+/// A jot in Recently Deleted: restore it or delete it for good.
+private struct DeletedCard: View {
+    let idea: Idea
+    let query: String
+    @Environment(IdeaStore.self) private var store
+
+    private var daysLeft: Int {
+        let end = (idea.deletedAt ?? .now).addingTimeInterval(IdeaStore.keepDeleted)
+        return max(Int(ceil(end.timeIntervalSinceNow / 86400)), 1)
+    }
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(highlight(idea.title, query)).font(.headline).foregroundStyle(.secondary)
+                Text(daysLeft == 1 ? "1 day left" : "\(daysLeft) days left")
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.tertiary)
+            }
+            Spacer()
+            Button("Restore") { store.restore(idea.id) }.controlSize(.small)
+            Button("Delete Now", role: .destructive) { store.deleteNow(idea.id) }.controlSize(.small)
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.background.opacity(0.6), in: .rect(cornerRadius: 10))
     }
 }
 
