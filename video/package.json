@@ -1,0 +1,12 @@
+{
+  "name": "jot-hero-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "stills": "node stills.mjs",
+    "render": "node render.mjs && sh encode.sh"
+  },
+  "dependencies": {
+    "playwright": "1.64.1"
+  }
+}

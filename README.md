@@ -25,8 +25,8 @@
 </p>
 
 <p align="center">
-  <img src="docs/assets/hero.webp" width="880" alt="Control-Option-J opens Jot's capture field; typing 'call alex at 16:30' and pressing Return saves it, and the reminder shows up in Calendar at 16:30. Control-Option-L opens Jot's Ideas list, where the jot is ticked and deleted with its reminder, and the reminder disappears from Calendar">
-  <br><sub>⌃⌥J captures, ↩ saves, the reminder lands in Calendar. Delete the jot and it leaves Calendar too.<br>Made with my <a href="https://koval.xyz/tools/video-editor/">online video editor</a>.</sub>
+  <a href="docs/assets/hero.mp4"><img src="docs/assets/hero.webp" width="880" alt="Control-Option-J opens Jot's capture field; typing 'call alex at 16:30' and pressing Return saves it, and the reminder shows up in Calendar at 16:30. Control-Option-L opens Jot's Ideas list, where the jot is ticked and deleted with its reminder, and the reminder disappears from Calendar"></a>
+  <br><sub>⌃⌥J captures, ↩ saves, the reminder lands in Calendar. Delete the jot and it leaves Calendar too.<br>Click it for the HD video. Its source is in <a href="video/">video/</a>.</sub>
 </p>
 
 <img src="docs/assets/jot.svg" height="18" align="absmiddle" alt="Jot"> is one shortcut away, ready to save your rough idea and turn it
