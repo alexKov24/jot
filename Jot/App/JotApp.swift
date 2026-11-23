@@ -37,6 +37,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        Notifier.shared.onOpen = { [unowned self] in list.show() }
         store.start()
         NSApp.servicesProvider = self
         NSUpdateDynamicServices()
@@ -69,7 +70,9 @@ struct MenuContent: View {
             Divider()
         }
         Button("New Idea") { app.showCapture() }
+            .globalKeyboardShortcut(.capture)
         Button("Show Ideas") { app.showList() }
+            .globalKeyboardShortcut(.list)
         Divider()
         Button("Settings…") {
             NSApp.activate()

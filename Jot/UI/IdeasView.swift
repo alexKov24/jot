@@ -5,9 +5,9 @@ import UniformTypeIdentifiers
 struct IdeasView: View {
     @Environment(IdeaStore.self) private var store
     @State private var dragging: UUID?
-    @State private var searching = false
     @State private var query = ""
     @State private var showDeleted = false
+    @State private var showBacklog = false
     @FocusState private var searchFocused: Bool
 
     private var shown: [Idea] {
@@ -21,30 +21,24 @@ struct IdeasView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 10) {
-                if searching {
-                    TextField("Search ideas", text: $query)
-                        .textFieldStyle(.plain)
-                        .font(.title3)
-                        .focused($searchFocused)
-                        .onExitCommand(perform: closeSearch)
-                } else {
-                    PixelText("my jots")
-                    if showDeleted {
-                        Text("Recently Deleted").font(.callout).foregroundStyle(.secondary)
-                    }
-                    Spacer()
+                Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
+                TextField(showDeleted ? "Search Recently Deleted" : "Search jots", text: $query)
+                    .textFieldStyle(.plain)
+                    .font(.title3)
+                    .focused($searchFocused)
+                    .onExitCommand { query = "" }
+                if !query.isEmpty {
+                    HeaderButton(symbol: "xmark.circle.fill") { query = "" }
                 }
-                Text("\(shown.count)")
-                    .font(.callout.monospacedDigit())
-                    .foregroundStyle(Color.amber)
-                HeaderButton(symbol: searching ? "xmark.circle.fill" : "magnifyingglass") {
-                    searching ? closeSearch() : openSearch()
-                }
-                .keyboardShortcut("f")
+                // ⌘F focuses search.
+                Button("") { searchFocused = true }
+                    .keyboardShortcut("f")
+                    .opacity(0)
+                    .frame(width: 0)
                 HeaderButton(symbol: showDeleted ? "trash.fill" : "trash") { showDeleted.toggle() }
                     .help(showDeleted ? "Back to jots" : "Recently Deleted")
+                PixelText("my jots")
             }
-            .animation(.snappy(duration: 0.2), value: searching)
             .padding(.horizontal, 20)
             // Clear the traffic lights in the title bar.
             .padding(.leading, 76)
@@ -74,23 +68,27 @@ struct IdeasView: View {
                 ContentUnavailableView.search(text: query)
                     .frame(maxHeight: .infinity)
             } else {
-                ScrollView {
-                    LazyVStack(spacing: 10) {
-                        if showDeleted {
-                            ForEach(shown) { DeletedCard(idea: $0, query: query) }
-                        } else {
-                            ForEach(shown) { idea in
-                                IdeaCard(idea: idea, query: query)
-                                    .onDrag {
-                                        dragging = idea.id
-                                        return NSItemProvider(object: idea.title as NSString)
+                // Re-checks every 30s so jots move to the backlog once their time passes.
+                TimelineView(.periodic(from: .now, by: 30)) { context in
+                    ScrollView {
+                        LazyVStack(spacing: 10) {
+                            if showDeleted {
+                                ForEach(shown) { DeletedCard(idea: $0, query: query) }
+                            } else {
+                                let backlog = shown.filter { $0.isBacklog(at: context.date) }
+                                ForEach(shown.filter { !$0.isBacklog(at: context.date) }, content: card)
+                                if !backlog.isEmpty {
+                                    let open = showBacklog || !query.isEmpty
+                                    BacklogHeader(count: backlog.count, open: open) {
+                                        withAnimation(.snappy(duration: 0.2)) { showBacklog.toggle() }
                                     }
-                                    .onDrop(of: [.text], delegate: CardDrop(target: idea.id, dragging: $dragging, store: store))
+                                    if open { ForEach(backlog, content: card) }
+                                }
                             }
                         }
+                        .padding(.horizontal, 14)
+                        .padding(.bottom, 14)
                     }
-                    .padding(.horizontal, 14)
-                    .padding(.bottom, 14)
                 }
             }
         }
@@ -99,14 +97,38 @@ struct IdeasView: View {
         .modifier(PanelChrome())
     }
 
-    private func openSearch() {
-        searching = true
-        DispatchQueue.main.async { searchFocused = true }
+    private func card(_ idea: Idea) -> some View {
+        IdeaCard(idea: idea, query: query)
+            .onDrag {
+                dragging = idea.id
+                return NSItemProvider(object: idea.title as NSString)
+            }
+            .onDrop(of: [.text], delegate: CardDrop(target: idea.id, dragging: $dragging, store: store))
     }
+}
 
-    private func closeSearch() {
-        query = ""
-        searching = false
+/// Collapsible divider above jots whose reminder time has passed.
+private struct BacklogHeader: View {
+    let count: Int
+    let open: Bool
+    let toggle: () -> Void
+
+    var body: some View {
+        Button(action: toggle) {
+            HStack(spacing: 6) {
+                Image(systemName: "chevron.right")
+                    .rotationEffect(.degrees(open ? 90 : 0))
+                Text("Backlog")
+                Text("\(count)").monospacedDigit()
+                Spacer()
+            }
+            .font(.callout.weight(.semibold))
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 6)
+            .padding(.top, 6)
+            .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
     }
 }
 
