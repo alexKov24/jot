@@ -32,6 +32,7 @@
 		DF53652D50074D171EE8AFFF /* JotWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB3E61545DDF8ADA12F518DB /* JotWidget.swift */; };
 		E627399561B1AC9DAB0B0408 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 991B7DE0DA849EA5EC2333F5 /* KeyboardShortcuts */; };
 		F171991BFADD981ABBAE4508 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9601547FC89D704EC0DD1F44 /* AppGroup.swift */; };
+		F1ECE215EAF870819622075D /* Notifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555342EFC2CCC2A97C850B4 /* Notifier.swift */; };
 		FF3C24B4E1C2AF0B66B608BE /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C77F105F90D7B2F0C8E041 /* Models.swift */; };
 /* End PBXBuildFile section */
 
@@ -72,6 +73,7 @@
 		5F225EE3FE50010884114EEE /* AppleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleModel.swift; sourceTree = "<group>"; };
 		63904256978BB005A3739559 /* Jot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Jot.entitlements; sourceTree = "<group>"; };
 		66C77F105F90D7B2F0C8E041 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		7555342EFC2CCC2A97C850B4 /* Notifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifier.swift; sourceTree = "<group>"; };
 		77886F9D72BE5FFD563D8970 /* Updates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Updates.swift; sourceTree = "<group>"; };
 		7F8706CA0A472D88DA09E8DC /* Jot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Jot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8623D731DD8286771433FC7E /* Reminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminders.swift; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 				256BEE884B390615B1B1F38B /* AppSettings.swift */,
 				39D78D10CBAC973656D6A49C /* FolderAccess.swift */,
 				598E2F50F07AA750F4E4D437 /* IdeaStore.swift */,
+				7555342EFC2CCC2A97C850B4 /* Notifier.swift */,
 				8623D731DD8286771433FC7E /* Reminders.swift */,
 			);
 			path = Store;
@@ -331,6 +334,7 @@
 				C1253963480980F0FA9F1AEC /* JotApp.swift in Sources */,
 				55FDB6CA52F4313E537FFD0B /* ModelSettings.swift in Sources */,
 				FF3C24B4E1C2AF0B66B608BE /* Models.swift in Sources */,
+				F1ECE215EAF870819622075D /* Notifier.swift in Sources */,
 				2B7C5A380169F2F592532E83 /* OllamaClient.swift in Sources */,
 				B07A480678D24B6F2F229384 /* Provider.swift in Sources */,
 				2C4A670A467C8700B409C32E /* Reminders.swift in Sources */,

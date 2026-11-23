@@ -25,4 +25,14 @@ struct Idea: Codable, Identifiable, Hashable, Sendable {
     var deletedAt: Date?
 
     var openItems: [ChecklistItem] { items.filter { !$0.done } }
+
+    /// When the reminder time has passed: the end of the day for all-day reminders.
+    var dueBy: Date? {
+        guard let remindAt else { return nil }
+        guard remindAllDay == true else { return remindAt }
+        return Calendar.current.date(byAdding: .day, value: 1, to: Calendar.current.startOfDay(for: remindAt))
+    }
+
+    /// Its time has passed, so it moves to the backlog.
+    func isBacklog(at now: Date = .now) -> Bool { dueBy.map { $0 <= now } ?? false }
 }
