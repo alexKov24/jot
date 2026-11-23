@@ -28,6 +28,8 @@ final class IdeaStore {
             MainActor.assumeIsolated { self?.applyWidgetToggles() }
         }
         applyWidgetToggles()
+        Notifier.shared.start()
+        ideas.forEach(Notifier.shared.schedule)
         // Finish anything interrupted by a quit mid-expansion.
         for idea in ideas where idea.status == .expanding { expand(idea.id) }
         // Jot can run for weeks; purge expired jots daily, not only on launch.
@@ -60,7 +62,10 @@ final class IdeaStore {
         for i in all.indices {
             if let j = all[i].items.firstIndex(where: { $0.id == itemID }) {
                 all[i].items[j].done.toggle()
-                if all[i].items[j].done, all[i].openItems.isEmpty { all[i].deletedAt = .now }
+                if all[i].items[j].done, all[i].openItems.isEmpty {
+                    all[i].deletedAt = .now
+                    Notifier.shared.cancel(all[i].id)
+                }
             }
         }
         save()
@@ -82,16 +87,19 @@ final class IdeaStore {
             do { try Reminders.delete(reminderID) } catch { lastError = error.localizedDescription }
         }
         update(id) { $0.deletedAt = .now }
+        Notifier.shared.cancel(id)
     }
 
     func restore(_ id: UUID) {
         update(id) { $0.deletedAt = nil }
+        if let idea = all.first(where: { $0.id == id }) { Notifier.shared.schedule(idea) }
     }
 
     /// Removes the jot for good.
     func deleteNow(_ id: UUID) {
         all.removeAll { $0.id == id }
         save()
+        Notifier.shared.cancel(id)
     }
 
     /// Switch to a new folder. An existing jot.json there wins; otherwise current ideas move in.
@@ -134,10 +142,14 @@ final class IdeaStore {
                     $0.status = .failed
                     $0.error = error.localizedDescription
                 }
+                if let idea = all.first(where: { $0.id == id }) { Notifier.shared.expanded(idea) }
                 return
             }
+            guard let idea = all.first(where: { $0.id == id }) else { return }
+            Notifier.shared.expanded(idea)
+            Notifier.shared.schedule(idea)
             // The checklist is fine even if Reminders fails; show the error with Retry.
-            guard let idea = all.first(where: { $0.id == id }), let date = idea.remindAt else { return }
+            guard let date = idea.remindAt else { return }
             do {
                 let reminderID = try await Reminders.save(idea, at: date)
                 update(id) { $0.reminderID = reminderID }
